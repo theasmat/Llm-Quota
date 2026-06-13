@@ -151,12 +151,12 @@ build_download_url() {
         linux)
             case "$PKG_EXT" in
                 deb)
-                    DOWNLOAD_URL="${base_url}/Llm%20Quota_${RELEASE_VERSION}_${DEB_ARCH}.deb"
-                    FILENAME="Llm Quota_${RELEASE_VERSION}_${DEB_ARCH}.deb"
+                    DOWNLOAD_URL="${base_url}/Llm.Quota_${RELEASE_VERSION}_${DEB_ARCH}.deb"
+                    FILENAME="Llm.Quota_${RELEASE_VERSION}_${DEB_ARCH}.deb"
                     ;;
                 rpm)
-                    DOWNLOAD_URL="${base_url}/Llm%20Quota-${RELEASE_VERSION}-1.${RPM_ARCH}.rpm"
-                    FILENAME="Llm Quota-${RELEASE_VERSION}-1.${RPM_ARCH}.rpm"
+                    DOWNLOAD_URL="${base_url}/Llm.Quota-${RELEASE_VERSION}-1.${RPM_ARCH}.rpm"
+                    FILENAME="Llm.Quota-${RELEASE_VERSION}-1.${RPM_ARCH}.rpm"
                     ;;
                 AppImage)
                     local appimage_arch
@@ -165,15 +165,15 @@ build_download_url() {
                     else
                         appimage_arch="aarch64"
                     fi
-                    DOWNLOAD_URL="${base_url}/Llm%20Quota_${RELEASE_VERSION}_${appimage_arch}.AppImage"
-                    FILENAME="Llm Quota_${RELEASE_VERSION}_${appimage_arch}.AppImage"
+                    DOWNLOAD_URL="${base_url}/Llm.Quota_${RELEASE_VERSION}_${appimage_arch}.AppImage"
+                    FILENAME="Llm.Quota_${RELEASE_VERSION}_${appimage_arch}.AppImage"
                     ;;
             esac
             ;;
         macos)
             # Prefer universal DMG, fallback to arch-specific
-            DOWNLOAD_URL="${base_url}/Llm%20Quota_${RELEASE_VERSION}_universal.dmg"
-            FILENAME="Llm Quota_${RELEASE_VERSION}_universal.dmg"
+            DOWNLOAD_URL="${base_url}/Llm.Quota_${RELEASE_VERSION}_universal.dmg"
+            FILENAME="Llm.Quota_${RELEASE_VERSION}_universal.dmg"
             ;;
     esac
 
