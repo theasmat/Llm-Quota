@@ -13,9 +13,11 @@ pub async fn add_account(
     refresh_token: String,
 ) -> Result<Account, String> {
     let temp_account_id = uuid::Uuid::new_v4().to_string();
-    let token_res = modules::oauth::refresh_access_token(&refresh_token, Some(&temp_account_id)).await?;
-    let user_info = modules::oauth::get_user_info(&token_res.access_token, Some(&temp_account_id)).await?;
-    
+    let token_res =
+        modules::oauth::refresh_access_token(&refresh_token, Some(&temp_account_id)).await?;
+    let user_info =
+        modules::oauth::get_user_info(&token_res.access_token, Some(&temp_account_id)).await?;
+
     let token = TokenData::new(
         token_res.access_token.clone(),
         refresh_token.to_string(),
@@ -25,29 +27,31 @@ pub async fn add_account(
         None,
         false,
         token_res.id_token.clone(),
-    ).with_oauth_client_key(token_res.oauth_client_key.clone());
+    )
+    .with_oauth_client_key(token_res.oauth_client_key.clone());
 
-    let mut account = modules::account::upsert_account(user_info.email.clone(), user_info.get_display_name(), token)?;
-    
-    match modules::quota::fetch_quota(&token_res.access_token, &account.email, Some(&account.id)).await {
-        Ok((quota_data, new_project_id)) => {
-            account.quota = Some(quota_data);
-            if let Some(pid) = new_project_id {
-                account.token.project_id = Some(pid);
-            }
-            let _ = modules::account::save_account(&account);
+    let mut account = modules::account::upsert_account(
+        user_info.email.clone(),
+        user_info.get_display_name(),
+        token,
+    )?;
+
+    if let Ok((quota_data, new_project_id)) =
+        modules::quota::fetch_quota(&token_res.access_token, &account.email, Some(&account.id))
+            .await
+    {
+        account.quota = Some(quota_data);
+        if let Some(pid) = new_project_id {
+            account.token.project_id = Some(pid);
         }
-        Err(_) => {}
+        let _ = modules::account::save_account(&account);
     }
-    
+
     Ok(account)
 }
 
 #[tauri::command]
-pub async fn delete_account(
-    _app: tauri::AppHandle,
-    account_id: String,
-) -> Result<(), String> {
+pub async fn delete_account(_app: tauri::AppHandle, account_id: String) -> Result<(), String> {
     modules::account::delete_account(&account_id)?;
     Ok(())
 }
@@ -62,9 +66,7 @@ pub async fn delete_accounts(
 }
 
 #[tauri::command]
-pub async fn reorder_accounts(
-    account_ids: Vec<String>,
-) -> Result<(), String> {
+pub async fn reorder_accounts(account_ids: Vec<String>) -> Result<(), String> {
     modules::account::reorder_accounts(&account_ids)?;
     Ok(())
 }
@@ -102,32 +104,50 @@ pub async fn fetch_account_quota(
 
     // Smart token refresh: only if expired or expiring soon
     if !account.token.refresh_token.is_empty() {
-        if let Ok(fresh_token) = modules::oauth::ensure_fresh_token(&account.token, Some(&account.id)).await {
+        if let Ok(fresh_token) =
+            modules::oauth::ensure_fresh_token(&account.token, Some(&account.id)).await
+        {
             account.token = fresh_token;
             let _ = modules::account::save_account(&account);
         }
     }
 
-    let (quota_data, pid) = modules::quota::fetch_quota(&account.token.access_token, &account.email, Some(&account.id)).await.map_err(|e| e.to_string())?;
+    let (quota_data, pid) = modules::quota::fetch_quota(
+        &account.token.access_token,
+        &account.email,
+        Some(&account.id),
+    )
+    .await
+    .map_err(|e| e.to_string())?;
 
     // If 403, force-refresh the token and retry once — the 403 often means the token
     // was silently invalidated by Google, not that the account is truly banned.
     if quota_data.is_forbidden && !account.token.refresh_token.is_empty() {
         crate::modules::logger::log_info(&format!(
-            "Got 403 for {}, force-refreshing token and retrying...", account.email
+            "Got 403 for {}, force-refreshing token and retrying...",
+            account.email
         ));
-        match modules::oauth::refresh_access_token(&account.token.refresh_token, Some(&account.id)).await {
+        match modules::oauth::refresh_access_token(&account.token.refresh_token, Some(&account.id))
+            .await
+        {
             Ok(token_res) => {
                 account.token.access_token = token_res.access_token.clone();
                 account.token.expires_in = token_res.expires_in;
-                account.token.expiry_timestamp = chrono::Utc::now().timestamp() + token_res.expires_in;
+                account.token.expiry_timestamp =
+                    chrono::Utc::now().timestamp() + token_res.expires_in;
                 if let Some(key) = token_res.oauth_client_key.clone() {
                     account.token.oauth_client_key = Some(key);
                 }
                 let _ = modules::account::save_account(&account);
 
                 // Retry quota fetch with the fresh token
-                match modules::quota::fetch_quota(&account.token.access_token, &account.email, Some(&account.id)).await {
+                match modules::quota::fetch_quota(
+                    &account.token.access_token,
+                    &account.email,
+                    Some(&account.id),
+                )
+                .await
+                {
                     Ok((retry_quota, retry_pid)) => {
                         account.quota = Some(retry_quota.clone());
                         if let Some(p) = retry_pid {
@@ -138,14 +158,16 @@ pub async fn fetch_account_quota(
                     }
                     Err(e) => {
                         crate::modules::logger::log_warn(&format!(
-                            "Retry after token refresh still failed for {}: {}", account.email, e
+                            "Retry after token refresh still failed for {}: {}",
+                            account.email, e
                         ));
                     }
                 }
             }
             Err(e) => {
                 crate::modules::logger::log_warn(&format!(
-                    "Force token refresh failed for {}: {}", account.email, e
+                    "Force token refresh failed for {}: {}",
+                    account.email, e
                 ));
             }
         }
@@ -161,31 +183,48 @@ pub async fn fetch_account_quota(
 }
 
 #[tauri::command]
-pub async fn refresh_all_quotas(_app: tauri::AppHandle) -> Result<Vec<(String, Result<QuotaData, String>)>, String> {
+pub async fn refresh_all_quotas(
+    _app: tauri::AppHandle,
+) -> Result<Vec<(String, Result<QuotaData, String>)>, String> {
     let mut results = Vec::new();
     let accounts = modules::account::list_accounts()?;
     for mut acc in accounts {
         // Smart token refresh: only if expired or expiring soon
         if !acc.token.refresh_token.is_empty() {
-            if let Ok(fresh_token) = modules::oauth::ensure_fresh_token(&acc.token, Some(&acc.id)).await {
+            if let Ok(fresh_token) =
+                modules::oauth::ensure_fresh_token(&acc.token, Some(&acc.id)).await
+            {
                 acc.token = fresh_token;
                 let _ = modules::account::save_account(&acc);
             }
         }
-        match modules::quota::fetch_quota(&acc.token.access_token, &acc.email, Some(&acc.id)).await {
+        match modules::quota::fetch_quota(&acc.token.access_token, &acc.email, Some(&acc.id)).await
+        {
             Ok((q, pid)) => {
                 // If 403, force-refresh token and retry once
                 if q.is_forbidden && !acc.token.refresh_token.is_empty() {
-                    if let Ok(token_res) = modules::oauth::refresh_access_token(&acc.token.refresh_token, Some(&acc.id)).await {
+                    if let Ok(token_res) = modules::oauth::refresh_access_token(
+                        &acc.token.refresh_token,
+                        Some(&acc.id),
+                    )
+                    .await
+                    {
                         acc.token.access_token = token_res.access_token.clone();
                         acc.token.expires_in = token_res.expires_in;
-                        acc.token.expiry_timestamp = chrono::Utc::now().timestamp() + token_res.expires_in;
+                        acc.token.expiry_timestamp =
+                            chrono::Utc::now().timestamp() + token_res.expires_in;
                         if let Some(key) = token_res.oauth_client_key.clone() {
                             acc.token.oauth_client_key = Some(key);
                         }
                         let _ = modules::account::save_account(&acc);
 
-                        if let Ok((retry_q, retry_pid)) = modules::quota::fetch_quota(&acc.token.access_token, &acc.email, Some(&acc.id)).await {
+                        if let Ok((retry_q, retry_pid)) = modules::quota::fetch_quota(
+                            &acc.token.access_token,
+                            &acc.email,
+                            Some(&acc.id),
+                        )
+                        .await
+                        {
                             acc.quota = Some(retry_q.clone());
                             if let Some(p) = retry_pid {
                                 acc.token.project_id = Some(p);

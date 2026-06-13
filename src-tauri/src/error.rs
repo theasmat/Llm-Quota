@@ -35,7 +35,6 @@ impl From<reqwest::Error> for AppError {
     }
 }
 
-
 // Implement Serialize so it can be used as a return value for Tauri commands
 impl Serialize for AppError {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>

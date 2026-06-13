@@ -12,7 +12,7 @@ pub struct TokenData {
     pub expiry_timestamp: i64,
     pub token_type: String,
     pub email: Option<String>,
-    /// Google Cloud ID， API 
+    /// Google Cloud ID， API
     #[serde(skip_serializing_if = "Option::is_none")]
     pub project_id: Option<String>,
     /// OAuth client key used to obtain/refresh this token

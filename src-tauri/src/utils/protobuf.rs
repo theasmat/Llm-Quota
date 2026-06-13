@@ -148,7 +148,7 @@ pub fn create_oauth_field(access_token: &str, refresh_token: &str, expiry: i64) 
 
     // Field 4: expiry (Nested Timestamp message, wire_type = 2)
     // Timestamp message contains: Field 1: seconds (int64, wire_type = 0)
-    let timestamp_tag = (1 << 3) | 0; // Field 1, varint
+    let timestamp_tag = 1 << 3; // Field 1, varint
     let timestamp_msg = {
         let mut m = encode_varint(timestamp_tag);
         m.extend(encode_varint(expiry as u64));
@@ -200,7 +200,7 @@ pub fn encode_string_field(field_num: u32, value: &str) -> Vec<u8> {
 
 ///  varint  (wire_type = 0)
 pub fn encode_varint_field(field_num: u32, value: u64) -> Vec<u8> {
-    let tag = (field_num << 3) | 0;
+    let tag = field_num << 3;
     let mut f = encode_varint(tag as u64);
     f.extend(encode_varint(value));
     f
@@ -225,10 +225,7 @@ pub fn create_oauth_info(
             || email_str.to_lowercase().ends_with("@163.com");
 
         if is_personal && is_gcp_tos {
-            crate::modules::logger::log_info(&format!(
-                "[Protobuf]  ({})  GCP  IDE 。",
-                email_str
-            ));
+            crate::modules::logger::log_info(&format!("[Protobuf]  ({})  GCP  IDE 。", email_str));
             is_gcp_tos = false;
         }
     }
@@ -244,12 +241,12 @@ pub fn create_oauth_info(
 
     // Field 4: expiry ( Timestamp )
     // message Timestamp { int64 seconds = 1; int32 nanos = 2; }
-    let seconds_tag = (1 << 3) | 0;
+    let seconds_tag = 1 << 3;
     let mut timestamp_msg = encode_varint(seconds_tag);
     timestamp_msg.extend(encode_varint(expiry as u64));
 
     //  Field 2: nanos (0)
-    let nanos_tag = (2 << 3) | 0;
+    let nanos_tag = 2 << 3;
     timestamp_msg.extend(encode_varint(nanos_tag));
     timestamp_msg.extend(encode_varint(0));
 
@@ -261,7 +258,7 @@ pub fn create_oauth_info(
     // Field 6: is_gcp_tos
     let field6 = is_gcp_tos.then(|| encode_varint_field(6, 1));
 
-    //  OAuthTokenInfo 
+    //  OAuthTokenInfo
     let mut oauth_info = Vec::new();
     oauth_info.extend(field1);
     oauth_info.extend(field2);
@@ -279,7 +276,7 @@ pub fn create_oauth_info(
 fn decode_legacy_base64_payload_if_needed(payload: Vec<u8>) -> Vec<u8> {
     use base64::{engine::general_purpose, Engine as _};
 
-    let looks_like_legacy_base64 = payload.len() % 4 == 0
+    let looks_like_legacy_base64 = payload.len().is_multiple_of(4)
         && !payload.is_empty()
         && payload.iter().all(
             |byte| matches!(byte, b'A'..=b'Z' | b'a'..=b'z' | b'0'..=b'9' | b'+' | b'/' | b'='),
@@ -360,7 +357,7 @@ pub fn decode_unified_state_entry(outer_b64: &str) -> Result<(String, Vec<u8>), 
         .or_else(|_| decode_legacy_unified_state_entry(&outer_blob))
 }
 
-///  protobuf varint 
+///  protobuf varint
 pub fn find_varint_field(data: &[u8], target_field: u32) -> Result<Option<u64>, String> {
     let mut offset = 0;
 

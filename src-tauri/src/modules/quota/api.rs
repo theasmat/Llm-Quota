@@ -11,8 +11,6 @@ const QUOTA_API_ENDPOINTS: [&str; 3] = [
     "https://cloudcode-pa.googleapis.com/v1internal:fetchAvailableModels",
 ];
 
-
-
 /// Get shared HTTP Client (15s timeout) for pure info fetching (No JA3)
 async fn create_standard_client(_account_id: Option<&str>) -> reqwest::Client {
     crate::utils::http::get_standard_client()
@@ -182,15 +180,16 @@ pub async fn fetch_quota_with_cache(
 
                         #[cfg(debug_assertions)]
                         {
-                            crate::modules::logger::log_error(&format!("API Error [{}]: {}", status, text));
+                            crate::modules::logger::log_error(&format!(
+                                "API Error [{}]: {}",
+                                status, text
+                            ));
                         }
 
                         // 403 Forbidden ： project_id ，
                         if status == reqwest::StatusCode::FORBIDDEN {
                             if current_payload.get("project").is_some() && !retry_without_project {
-                                crate::modules::logger::log_warn(&format!(
-                                    "Quota fetch got 403 with project ID, retrying without project ID..."
-                                ));
+                                crate::modules::logger::log_warn("Quota fetch got 403 with project ID, retrying without project ID...");
                                 current_payload = json!({});
                                 retry_without_project = true;
                                 continue;
@@ -202,14 +201,13 @@ pub async fn fetch_quota_with_cache(
                                     "Quota API {} returned 403, falling back to next endpoint",
                                     ep_url
                                 ));
-                                last_error = Some(AppError::Unknown(format!("HTTP 403 - {}", text)));
+                                last_error =
+                                    Some(AppError::Unknown(format!("HTTP 403 - {}", text)));
                                 tokio::time::sleep(std::time::Duration::from_secs(1)).await;
                                 break; // Break the inner retry loop, continue to next endpoint
                             }
 
-                            crate::modules::logger::log_warn(&format!(
-                                "Account unauthorized (403 Forbidden) on all endpoints, marking as forbidden"
-                            ));
+                            crate::modules::logger::log_warn("Account unauthorized (403 Forbidden) on all endpoints, marking as forbidden");
                             let mut q = QuotaData::new();
                             q.is_forbidden = true;
                             q.subscription_tier = subscription_tier.clone();
@@ -341,4 +339,3 @@ pub async fn fetch_all_quotas(
     }
     results
 }
-

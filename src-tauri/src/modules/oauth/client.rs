@@ -4,7 +4,6 @@ use serde::{Deserialize, Serialize};
 
 // Google OAuth configuration
 
-
 const TOKEN_URL: &str = "https://oauth2.googleapis.com/token";
 const USERINFO_URL: &str = "https://www.googleapis.com/oauth2/v2/userinfo";
 const TOKEN_REFRESH_SKEW_SECONDS: i64 = 900;
@@ -54,7 +53,6 @@ impl UserInfo {
     }
 }
 
-
 /// Generate OAuth authorization URL with optional client selection.
 /// Returns (auth_url, resolved_client_key).
 pub fn get_auth_url_with_client(
@@ -64,7 +62,7 @@ pub fn get_auth_url_with_client(
 ) -> Result<(String, String), String> {
     let client = select_auth_client(client_key)?;
 
-    let scopes = vec![
+    let scopes = [
         "openid",
         "https://www.googleapis.com/auth/cloud-platform",
         "https://www.googleapis.com/auth/userinfo.email",
@@ -120,7 +118,10 @@ async fn exchange_code_once(
 
     let response = client
         .post(TOKEN_URL)
-        .header(reqwest::header::USER_AGENT, crate::constants::NATIVE_OAUTH_USER_AGENT)
+        .header(
+            reqwest::header::USER_AGENT,
+            crate::constants::NATIVE_OAUTH_USER_AGENT,
+        )
         .form(&params)
         .send()
         .await
@@ -128,10 +129,7 @@ async fn exchange_code_once(
             if e.is_connect() || e.is_timeout() {
                 (
                     None,
-                    format!(
-                        "Token exchange request failed: {}. ， Google 。",
-                        e
-                    ),
+                    format!("Token exchange request failed: {}. ， Google 。", e),
                 )
             } else {
                 (None, format!("Token exchange request failed: {}", e))
@@ -242,7 +240,7 @@ async fn refresh_access_token_once(
     account_id: Option<&str>,
     client_cfg: &OAuthClientConfig,
 ) -> Result<TokenResponse, (Option<reqwest::StatusCode>, String)> {
-    // [PHASE 2]  account_id 
+    // [PHASE 2]  account_id
     let client = crate::utils::http::get_long_standard_client();
 
     let params = [
@@ -252,7 +250,7 @@ async fn refresh_access_token_once(
         ("grant_type", "refresh_token"),
     ];
 
-    // [FIX #1583] ， Docker 
+    // [FIX #1583] ， Docker
     if let Some(id) = account_id {
         crate::modules::logger::log_info(&format!("Refreshing Token for account: {}...", id));
     } else {
@@ -275,13 +273,7 @@ async fn refresh_access_token_once(
         .await
         .map_err(|e| {
             if e.is_connect() || e.is_timeout() {
-                (
-                    None,
-                    format!(
-                        "Refresh request failed: {}.  Google ，。",
-                        e
-                    ),
-                )
+                (None, format!("Refresh request failed: {}.  Google ，。", e))
             } else {
                 (None, format!("Refresh request failed: {}", e))
             }
@@ -302,10 +294,13 @@ async fn refresh_access_token_once(
     } else {
         let status = response.status();
         let error_text = response.text().await.unwrap_or_default();
-        
+
         #[cfg(debug_assertions)]
         {
-            crate::modules::logger::log_error(&format!("OAuth Refresh Error [{}]: {}", status, error_text));
+            crate::modules::logger::log_error(&format!(
+                "OAuth Refresh Error [{}]: {}",
+                status, error_text
+            ));
         }
 
         Err((Some(status), format!("Refresh failed: {}", error_text)))

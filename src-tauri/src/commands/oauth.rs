@@ -6,9 +6,9 @@ use crate::modules::oauth::OAuthClientDescriptor;
 pub async fn start_oauth_login(app: tauri::AppHandle) -> Result<Account, String> {
     // Note: since we haven't modularized oauth_server yet, we use modules::oauth_server
     let token_res = modules::oauth::start_oauth_flow(Some(app), None).await?;
-    
+
     let user_info = modules::oauth::get_user_info(&token_res.access_token, None).await?;
-    
+
     let token = TokenData::new(
         token_res.access_token.clone(),
         token_res.refresh_token.unwrap_or_default(),
@@ -18,21 +18,26 @@ pub async fn start_oauth_login(app: tauri::AppHandle) -> Result<Account, String>
         None,
         false,
         token_res.id_token.clone(),
-    ).with_oauth_client_key(token_res.oauth_client_key.clone());
+    )
+    .with_oauth_client_key(token_res.oauth_client_key.clone());
 
-    let mut account = modules::account::upsert_account(user_info.email.clone(), user_info.get_display_name(), token)?;
-    
-    match modules::quota::fetch_quota(&token_res.access_token, &account.email, Some(&account.id)).await {
-        Ok((quota_data, new_project_id)) => {
-            account.quota = Some(quota_data);
-            if let Some(pid) = new_project_id {
-                account.token.project_id = Some(pid);
-            }
-            let _ = modules::account::save_account(&account);
+    let mut account = modules::account::upsert_account(
+        user_info.email.clone(),
+        user_info.get_display_name(),
+        token,
+    )?;
+
+    if let Ok((quota_data, new_project_id)) =
+        modules::quota::fetch_quota(&token_res.access_token, &account.email, Some(&account.id))
+            .await
+    {
+        account.quota = Some(quota_data);
+        if let Some(pid) = new_project_id {
+            account.token.project_id = Some(pid);
         }
-        Err(_) => {}
+        let _ = modules::account::save_account(&account);
     }
-    
+
     Ok(account)
 }
 
@@ -44,9 +49,9 @@ pub async fn prepare_oauth_url(app: tauri::AppHandle) -> Result<String, String> 
 #[tauri::command]
 pub async fn complete_oauth_login() -> Result<Account, String> {
     let token_res = modules::oauth::complete_oauth_flow(None).await?;
-    
+
     let user_info = modules::oauth::get_user_info(&token_res.access_token, None).await?;
-    
+
     let token = TokenData::new(
         token_res.access_token.clone(),
         token_res.refresh_token.unwrap_or_default(),
@@ -56,21 +61,26 @@ pub async fn complete_oauth_login() -> Result<Account, String> {
         None,
         false,
         token_res.id_token.clone(),
-    ).with_oauth_client_key(token_res.oauth_client_key.clone());
+    )
+    .with_oauth_client_key(token_res.oauth_client_key.clone());
 
-    let mut account = modules::account::upsert_account(user_info.email.clone(), user_info.get_display_name(), token)?;
-    
-    match modules::quota::fetch_quota(&token_res.access_token, &account.email, Some(&account.id)).await {
-        Ok((quota_data, new_project_id)) => {
-            account.quota = Some(quota_data);
-            if let Some(pid) = new_project_id {
-                account.token.project_id = Some(pid);
-            }
-            let _ = modules::account::save_account(&account);
+    let mut account = modules::account::upsert_account(
+        user_info.email.clone(),
+        user_info.get_display_name(),
+        token,
+    )?;
+
+    if let Ok((quota_data, new_project_id)) =
+        modules::quota::fetch_quota(&token_res.access_token, &account.email, Some(&account.id))
+            .await
+    {
+        account.quota = Some(quota_data);
+        if let Some(pid) = new_project_id {
+            account.token.project_id = Some(pid);
         }
-        Err(_) => {}
+        let _ = modules::account::save_account(&account);
     }
-    
+
     Ok(account)
 }
 

@@ -34,7 +34,10 @@ pub fn save_accounts(accounts: &[Account]) -> Result<(), String> {
 }
 
 pub fn get_account(account_id: &str) -> Option<Account> {
-    list_accounts().unwrap_or_default().into_iter().find(|a| a.id == account_id)
+    list_accounts()
+        .unwrap_or_default()
+        .into_iter()
+        .find(|a| a.id == account_id)
 }
 
 pub fn save_account(account: &Account) -> Result<(), String> {
@@ -47,7 +50,11 @@ pub fn save_account(account: &Account) -> Result<(), String> {
     save_accounts(&accounts)
 }
 
-pub fn upsert_account(email: String, name: Option<String>, token: TokenData) -> Result<Account, String> {
+pub fn upsert_account(
+    email: String,
+    name: Option<String>,
+    token: TokenData,
+) -> Result<Account, String> {
     let mut accounts = list_accounts()?;
     if let Some(existing) = accounts.iter_mut().find(|a| a.email == email) {
         existing.token = token.clone();

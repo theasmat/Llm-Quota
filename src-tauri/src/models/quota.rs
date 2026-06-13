@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-/// 
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ModelQuota {
     pub name: String,
@@ -26,7 +26,7 @@ pub struct ModelQuota {
     pub supported_mime_types: Option<std::collections::HashMap<String, bool>>,
 }
 
-/// 
+///
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct QuotaData {
     pub models: Vec<ModelQuota>,

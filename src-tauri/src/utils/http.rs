@@ -15,8 +15,7 @@ pub static SHARED_STANDARD_CLIENT_LONG: Lazy<Client> = Lazy::new(|| create_base_
 
 /// Base client creation logic
 fn create_base_client(timeout_secs: u64) -> Client {
-    let builder = Client::builder()
-        .timeout(std::time::Duration::from_secs(timeout_secs));
+    let builder = Client::builder().timeout(std::time::Duration::from_secs(timeout_secs));
 
     builder.build().unwrap_or_else(|_| Client::new())
 }

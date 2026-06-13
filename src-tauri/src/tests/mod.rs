@@ -10,13 +10,16 @@ mod account_tests {
     /// All account tests share a single JSON file — serialize them to avoid corruption.
     static LOCK: OnceLock<Mutex<()>> = OnceLock::new();
     fn lock() -> std::sync::MutexGuard<'static, ()> {
-        LOCK.get_or_init(|| Mutex::new(())).lock().unwrap_or_else(|p| p.into_inner())
+        LOCK.get_or_init(|| Mutex::new(()))
+            .lock()
+            .unwrap_or_else(|p| p.into_inner())
     }
 
     /// Remove any leftover accounts from a prior failed run.
     fn cleanup_emails(emails: &[&str]) {
         if let Ok(accs) = account::list_accounts() {
-            let ids: Vec<String> = accs.iter()
+            let ids: Vec<String> = accs
+                .iter()
                 .filter(|a| emails.contains(&a.email.as_str()))
                 .map(|a| a.id.clone())
                 .collect();
@@ -27,7 +30,16 @@ mod account_tests {
     }
 
     fn make_token(access: &str, refresh: &str) -> TokenData {
-        TokenData::new(access.into(), refresh.into(), 3600, Some("test@example.com".into()), None, None, false, None)
+        TokenData::new(
+            access.into(),
+            refresh.into(),
+            3600,
+            Some("test@example.com".into()),
+            None,
+            None,
+            false,
+            None,
+        )
     }
 
     #[test]
@@ -58,7 +70,9 @@ mod account_tests {
         cleanup_emails(&["upsert_new@test.com"]);
 
         let token = make_token("at_new", "rt_new");
-        let acc = account::upsert_account("upsert_new@test.com".into(), Some("New User".into()), token).unwrap();
+        let acc =
+            account::upsert_account("upsert_new@test.com".into(), Some("New User".into()), token)
+                .unwrap();
         assert_eq!(acc.email, "upsert_new@test.com");
         assert_eq!(acc.name, Some("New User".into()));
 
@@ -70,8 +84,18 @@ mod account_tests {
         let _g = lock();
         cleanup_emails(&["upsert_update@test.com"]);
 
-        let acc1 = account::upsert_account("upsert_update@test.com".into(), Some("Original".into()), make_token("old_access", "rt")).unwrap();
-        let acc2 = account::upsert_account("upsert_update@test.com".into(), Some("Updated".into()), make_token("new_access", "rt")).unwrap();
+        let acc1 = account::upsert_account(
+            "upsert_update@test.com".into(),
+            Some("Original".into()),
+            make_token("old_access", "rt"),
+        )
+        .unwrap();
+        let acc2 = account::upsert_account(
+            "upsert_update@test.com".into(),
+            Some("Updated".into()),
+            make_token("new_access", "rt"),
+        )
+        .unwrap();
 
         assert_eq!(acc1.id, acc2.id, "Same email should update, not create new");
         assert_eq!(acc2.token.access_token, "new_access");
@@ -84,7 +108,8 @@ mod account_tests {
         let _g = lock();
         cleanup_emails(&["delete@test.com"]);
 
-        let acc = account::upsert_account("delete@test.com".into(), None, make_token("at", "rt")).unwrap();
+        let acc = account::upsert_account("delete@test.com".into(), None, make_token("at", "rt"))
+            .unwrap();
         account::delete_account(&acc.id).unwrap();
 
         assert!(account::get_account(&acc.id).is_none());
@@ -95,9 +120,12 @@ mod account_tests {
         let _g = lock();
         cleanup_emails(&["bulk1@test.com", "bulk2@test.com", "bulk3@test.com"]);
 
-        let acc1 = account::upsert_account("bulk1@test.com".into(), None, make_token("a1", "r1")).unwrap();
-        let acc2 = account::upsert_account("bulk2@test.com".into(), None, make_token("a2", "r2")).unwrap();
-        let acc3 = account::upsert_account("bulk3@test.com".into(), None, make_token("a3", "r3")).unwrap();
+        let acc1 =
+            account::upsert_account("bulk1@test.com".into(), None, make_token("a1", "r1")).unwrap();
+        let acc2 =
+            account::upsert_account("bulk2@test.com".into(), None, make_token("a2", "r2")).unwrap();
+        let acc3 =
+            account::upsert_account("bulk3@test.com".into(), None, make_token("a3", "r3")).unwrap();
 
         account::delete_accounts(&[acc1.id.clone(), acc2.id.clone()]).unwrap();
 
@@ -113,8 +141,12 @@ mod account_tests {
         let _g = lock();
         cleanup_emails(&["reorder1@test.com", "reorder2@test.com"]);
 
-        let acc1 = account::upsert_account("reorder1@test.com".into(), None, make_token("a1", "r1")).unwrap();
-        let acc2 = account::upsert_account("reorder2@test.com".into(), None, make_token("a2", "r2")).unwrap();
+        let acc1 =
+            account::upsert_account("reorder1@test.com".into(), None, make_token("a1", "r1"))
+                .unwrap();
+        let acc2 =
+            account::upsert_account("reorder2@test.com".into(), None, make_token("a2", "r2"))
+                .unwrap();
 
         account::reorder_accounts(&[acc2.id.clone(), acc1.id.clone()]).unwrap();
 
@@ -156,8 +188,32 @@ mod quota_tests {
         use crate::models::quota::ModelQuota;
         let mut q = QuotaData::new();
         q.models = vec![
-            ModelQuota { name: "gemini-1.5-pro".into(), percentage: 80, reset_time: "".into(), display_name: None, supports_images: None, supports_thinking: None, thinking_budget: None, recommended: None, max_tokens: None, max_output_tokens: None, supported_mime_types: None },
-            ModelQuota { name: "gemini-2.0-flash".into(), percentage: 50, reset_time: "".into(), display_name: None, supports_images: None, supports_thinking: None, thinking_budget: None, recommended: None, max_tokens: None, max_output_tokens: None, supported_mime_types: None },
+            ModelQuota {
+                name: "gemini-1.5-pro".into(),
+                percentage: 80,
+                reset_time: "".into(),
+                display_name: None,
+                supports_images: None,
+                supports_thinking: None,
+                thinking_budget: None,
+                recommended: None,
+                max_tokens: None,
+                max_output_tokens: None,
+                supported_mime_types: None,
+            },
+            ModelQuota {
+                name: "gemini-2.0-flash".into(),
+                percentage: 50,
+                reset_time: "".into(),
+                display_name: None,
+                supports_images: None,
+                supports_thinking: None,
+                thinking_budget: None,
+                recommended: None,
+                max_tokens: None,
+                max_output_tokens: None,
+                supported_mime_types: None,
+            },
         ];
 
         let json = serde_json::to_string(&q).unwrap();
@@ -174,8 +230,13 @@ mod token_tests {
     #[test]
     fn test_token_fields_correct() {
         let t = TokenData::new(
-            "my_access".into(), "my_refresh".into(), 7200,
-            Some("user@example.com".into()), None, None, false,
+            "my_access".into(),
+            "my_refresh".into(),
+            7200,
+            Some("user@example.com".into()),
+            None,
+            None,
+            false,
             Some("id_token_value".into()),
         );
         assert_eq!(t.access_token, "my_access");
@@ -193,9 +254,21 @@ mod token_tests {
 
     #[test]
     fn test_token_has_future_expiry_timestamp() {
-        let t = TokenData::new("at".into(), "rt".into(), 3600, None, None, None, false, None);
+        let t = TokenData::new(
+            "at".into(),
+            "rt".into(),
+            3600,
+            None,
+            None,
+            None,
+            false,
+            None,
+        );
         let now = chrono::Utc::now().timestamp();
-        assert!(t.expiry_timestamp > now, "Token expiry_timestamp should be in the future");
+        assert!(
+            t.expiry_timestamp > now,
+            "Token expiry_timestamp should be in the future"
+        );
     }
 }
 
@@ -205,10 +278,21 @@ mod import_tests {
     use std::fs;
 
     fn make_test_accounts(count: usize) -> Vec<Account> {
-        (0..count).map(|i| {
-            let token = TokenData::new(format!("at_{i}"), format!("rt_{i}"), 3600, None, None, None, false, None);
-            Account::new(format!("import-id-{i}"), format!("user{i}@test.com"), token)
-        }).collect()
+        (0..count)
+            .map(|i| {
+                let token = TokenData::new(
+                    format!("at_{i}"),
+                    format!("rt_{i}"),
+                    3600,
+                    None,
+                    None,
+                    None,
+                    false,
+                    None,
+                );
+                Account::new(format!("import-id-{i}"), format!("user{i}@test.com"), token)
+            })
+            .collect()
     }
 
     #[test]
@@ -231,7 +315,8 @@ mod import_tests {
         fs::write(path, r#"{ not valid json !"#).unwrap();
 
         let content = fs::read_to_string(path).unwrap();
-        let result: Result<Vec<Account>, _> = serde_json::from_str(&content).map_err(|e| e.to_string());
+        let result: Result<Vec<Account>, _> =
+            serde_json::from_str(&content).map_err(|e| e.to_string());
         assert!(result.is_err());
 
         fs::remove_file(path).unwrap();
@@ -240,7 +325,9 @@ mod import_tests {
     #[test]
     fn test_import_missing_file_returns_empty() {
         let path = std::path::Path::new("/tmp/ag_no_such_file_xyz.json");
-        if path.exists() { fs::remove_file(path).unwrap(); }
+        if path.exists() {
+            fs::remove_file(path).unwrap();
+        }
 
         let result: Vec<Account> = if path.exists() {
             let c = fs::read_to_string(path).unwrap();

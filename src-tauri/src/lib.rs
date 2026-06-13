@@ -1,12 +1,11 @@
-
 pub mod commands;
 pub mod constants;
 pub mod error;
 pub mod models;
 pub mod modules;
-pub mod utils;
 #[cfg(test)]
 mod tests;
+pub mod utils;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {

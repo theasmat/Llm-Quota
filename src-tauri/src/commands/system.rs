@@ -2,7 +2,9 @@ use crate::modules;
 
 #[tauri::command]
 pub fn get_data_dir_path(_app_handle: tauri::AppHandle) -> Result<String, String> {
-    Ok(modules::config::get_config_dir().to_string_lossy().into_owned())
+    Ok(modules::config::get_config_dir()
+        .to_string_lossy()
+        .into_owned())
 }
 
 #[tauri::command]

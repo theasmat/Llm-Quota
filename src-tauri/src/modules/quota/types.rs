@@ -75,4 +75,3 @@ pub struct Tier {
     #[allow(dead_code)]
     pub slug: Option<String>,
 }
-
