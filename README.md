@@ -56,7 +56,7 @@ Llm Quota is a compact, high-density dashboard built with Tauri and React to man
 The easiest way to install on macOS and Linux is by using the automated script:
 
 ```bash
-curl -fsSL [https://raw.githubusercontent.com/theasmat/llm-quota/master/install.sh](https://raw.githubusercontent.com/theasmat/llm-quota/master/install.sh) | bash
+curl -fsSL https://raw.githubusercontent.com/theasmat/llm-quota/master/install.sh | bash
 
 ```
 
@@ -71,14 +71,14 @@ brew install --no-quarantine theasmat/llm-quota/llm-quota
 
 Select the appropriate package for the target operating system.
 
-| 🍎 macOS                                                                      | 🪟 Windows                                                       | 🐧 Linux                                                                  |
-| ----------------------------------------------------------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| [⬇️ Universal (.dmg)](#) _(TBD)_        | [⬇️ x64 (.exe)](#) _(TBD)_ | [⬇️ amd64 (.AppImage)](https://github.com/theasmat/llm-quota/releases/download/4.2.2/Llm.Quota_4.2.2_amd64.AppImage) _(0 B)_   |
-| [⬇️ Apple Silicon (.dmg)](#) _(TBD)_    | [⬇️ x64 (.msi)](#) _(TBD)_ | [⬇️ aarch64 (.AppImage)](#) _(TBD)_ |
-| [⬇️ Intel x64 (.dmg)](https://github.com/theasmat/llm-quota/releases/download/4.2.2/Llm.Quota_4.2.2_x64.dmg) _(0 B)_        |                                                                  | [⬇️ amd64 (.deb)](#) _(TBD)_        |
-| [⬇️ Universal (.tar.gz)](#) _(TBD)_     |                                                                  | [⬇️ arm64 (.deb)](#) _(TBD)_        |
-| [⬇️ Apple Silicon (.tar.gz)](#) _(TBD)_ |                                                                  | [⬇️ x86_64 (.rpm)](#) _(TBD)_       |
-| [⬇️ Intel x64 (.tar.gz)](#) _(TBD)_     |                                                                  | [⬇️ aarch64 (.rpm)](#) _(TBD)_      |
+| 🍎 macOS                                                                                                             | 🪟 Windows                 | 🐧 Linux                                                                                                                     |
+| -------------------------------------------------------------------------------------------------------------------- | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| [⬇️ Universal (.dmg)](#) _(TBD)_                                                                                     | [⬇️ x64 (.exe)](#) _(TBD)_ | [⬇️ amd64 (.AppImage)](https://github.com/theasmat/llm-quota/releases/download/4.2.2/Llm.Quota_4.2.2_amd64.AppImage) _(0 B)_ |
+| [⬇️ Apple Silicon (.dmg)](#) _(TBD)_                                                                                 | [⬇️ x64 (.msi)](#) _(TBD)_ | [⬇️ aarch64 (.AppImage)](#) _(TBD)_                                                                                          |
+| [⬇️ Intel x64 (.dmg)](https://github.com/theasmat/llm-quota/releases/download/4.2.2/Llm.Quota_4.2.2_x64.dmg) _(0 B)_ |                            | [⬇️ amd64 (.deb)](#) _(TBD)_                                                                                                 |
+| [⬇️ Universal (.tar.gz)](#) _(TBD)_                                                                                  |                            | [⬇️ arm64 (.deb)](#) _(TBD)_                                                                                                 |
+| [⬇️ Apple Silicon (.tar.gz)](#) _(TBD)_                                                                              |                            | [⬇️ x86_64 (.rpm)](#) _(TBD)_                                                                                                |
+| [⬇️ Intel x64 (.tar.gz)](#) _(TBD)_                                                                                  |                            | [⬇️ aarch64 (.rpm)](#) _(TBD)_                                                                                               |
 
 ---
 
@@ -118,7 +118,7 @@ Ensure the following are installed on the system:
 1. Clone the repository and navigate to the project directory:
 
 ```bash
-git clone [https://github.com/theasmat/llm-quota.git](https://github.com/theasmat/llm-quota.git)
+git clone https://github.com/theasmat/llm-quota.git
 cd llm-quota
 
 ```
