@@ -1,12 +1,34 @@
-# Llm Quota
+<div align="center">
+  <img src="assets/logo/icon.png" width="128" alt="Llm Quota Logo"/>
+  <h1>Llm Quota</h1>
+  <p>A compact, high-density dashboard to manage quota limits for LLM accounts.</p>
 
-[![macOS](https://img.shields.io/badge/macOS-000000?style=for-the-badge&logo=apple&logoColor=white)](https://github.com/theasmat/llm-quota/releases/latest)
-[![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/theasmat/llm-quota/releases/latest)
-[![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)](https://github.com/theasmat/llm-quota/releases/latest)
+  <a href="https://github.com/theasmat/llm-quota/releases/latest">
+    <img src="https://img.shields.io/badge/macOS-000000?style=for-the-badge&logo=apple&logoColor=white" alt="macOS" />
+  </a>
+  <a href="https://github.com/theasmat/llm-quota/releases/latest">
+    <img src="https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Windows" />
+  </a>
+  <a href="https://github.com/theasmat/llm-quota/releases/latest">
+    <img src="https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black" alt="Linux" />
+  </a>
+</div>
+
+<br/>
 
 Llm Quota is a compact, high-density dashboard built with Tauri and React to manage and monitor quota limits for LLM accounts like Google Gemini. Designed to look and feel like a professional spreadsheet-style internal tool, it offers a fast, local-first experience with a dense data grid, dark/light theme support, and a highly responsive native UI.
 
-## Features
+## 🚀 Downloads
+
+| OS | Download Link | Notes |
+|----|--------------|-------|
+| 🍏 **macOS** | [Download .dmg](https://github.com/theasmat/llm-quota/releases/latest) | Or use Homebrew: `brew install --no-quarantine theasmat/llm-quota/llm-quota` |
+| 🪟 **Windows** | [Download .exe](https://github.com/theasmat/llm-quota/releases/latest) | Standalone Windows installer |
+| 🐧 **Linux** | [Download .AppImage / .deb](https://github.com/theasmat/llm-quota/releases/latest) | Universal AppImage or native packages |
+
+<br/>
+
+## ✨ Features
 
 - ⚡ **Local-First & Fast**: Built with Tauri and Rust for a lightweight, deeply integrated native desktop experience.
 - 📊 **High-Density Dashboard**: Ultra-compact UI designed to maximize screen real estate and give you an overview of your quotas at a glance.
@@ -14,14 +36,14 @@ Llm Quota is a compact, high-density dashboard built with Tauri and React to man
 - 🎨 **Built-in Themes**: Natively supports both Light and Dark mode with seamless Tailwind CSS integration.
 - 📥 **Export & Backup**: Export your account data easily for safekeeping.
 
-## Tech Stack
+## 🛠️ Tech Stack
 
 - **Frontend**: React, TypeScript, Tailwind CSS, Lucide React
 - **Backend**: Tauri, Rust
 - **State Management**: Zustand
 - **Icons**: Lucide
 
-## Installation
+## 💻 Installation
 
 ### macOS (Homebrew)
 The easiest way to install on macOS is using our Homebrew tap:
