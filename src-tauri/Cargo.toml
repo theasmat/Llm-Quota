@@ -1,6 +1,6 @@
 [package]
 name = "llm_quota"
-version = "4.2.2"
+version = "0.1.0"
 description = "A Tauri App"
 authors = ["you"]
 license = "CC-BY-NC-SA-4.0"
