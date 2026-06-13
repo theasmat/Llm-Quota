@@ -11,12 +11,40 @@
   </a>
   <a href="https://github.com/theasmat/llm-quota/releases/latest">
     <img src="https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black" alt="Linux" />
-  </a>
+  <br/>
+  
+  <p>
+    <a href="https://github.com/theasmat/llm-quota/stargazers">
+      <img src="https://img.shields.io/github/stars/theasmat/llm-quota?style=for-the-badge&color=FCC624&logo=github&logoColor=black" alt="Stars" />
+    </a>
+    <a href="https://github.com/theasmat/llm-quota/network/members">
+      <img src="https://img.shields.io/github/forks/theasmat/llm-quota?style=for-the-badge&color=0078D6&logo=github&logoColor=white" alt="Forks" />
+    </a>
+    <a href="https://github.com/theasmat/llm-quota/issues">
+      <img src="https://img.shields.io/github/issues/theasmat/llm-quota?style=for-the-badge&color=000000&logo=github&logoColor=white" alt="Issues" />
+    </a>
+    <a href="https://github.com/theasmat/llm-quota/blob/master/LICENSE">
+      <img src="https://img.shields.io/github/license/theasmat/llm-quota?style=for-the-badge&color=success&logo=open-source-initiative&logoColor=white" alt="License" />
+    </a>
+  </p>
 </div>
 
 <br/>
 
 Llm Quota is a compact, high-density dashboard built with Tauri and React to manage and monitor quota limits for LLM accounts like Google Gemini. Designed to look and feel like a professional spreadsheet-style internal tool, it offers a fast, local-first experience with a dense data grid, dark/light theme support, and a highly responsive native UI.
+
+<br/>
+
+## 📖 Table of Contents
+- [🚀 Downloads](#-downloads)
+- [✨ Features](#-features)
+- [🛠️ Tech Stack](#️-tech-stack)
+- [💻 Installation](#-installation)
+- [📷 Screenshots](#-screenshots)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
+
+<br/>
 
 ## 🚀 Downloads
 
@@ -99,6 +127,39 @@ pnpm tauri build
 
 The compiled binaries will be available in the `src-tauri/target/release` directory.
 
-## License
+<br/>
+
+## 📷 Screenshots
+
+> **Note**: Add your screenshots here to show off the beautiful UI!
+> 
+> *<img src="https://via.placeholder.com/800x450.png?text=Add+Dashboard+Screenshot+Here" alt="Dashboard" />*
+
+<br/>
+
+## 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome!  
+Feel free to check out the [issues page](https://github.com/theasmat/llm-quota/issues).
+
+1. **Fork** the project
+2. **Create** your feature branch (`git checkout -b feature/AmazingFeature`)
+3. **Commit** your changes (`git commit -m 'Add some AmazingFeature'`)
+4. **Push** to the branch (`git push origin feature/AmazingFeature`)
+5. **Open** a Pull Request
+
+<br/>
+
+## 💬 Feedback & Support
+
+If you have any feedback, please reach out by opening an issue or starting a discussion. If you like the project, please give it a ⭐️!
+
+<br/>
+
+## 📄 License
 
 This project is licensed under the [MIT License](LICENSE).
+
+<div align="center">
+  <sub>Built with ❤️ by Asmat</sub>
+</div>
