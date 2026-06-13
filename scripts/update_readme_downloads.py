@@ -28,8 +28,7 @@ def update_readme():
     # We will search for the files in the 'all-artifacts' directory
     artifacts_dir = "all-artifacts"
     
-    def get_file_info(pattern):
-        # find the actual file matching the pattern
+    def get_file_info(pattern, default_url="#", default_size="TBD"):
         search_path = os.path.join(artifacts_dir, pattern)
         matches = glob.glob(search_path)
         if matches:
@@ -37,78 +36,55 @@ def update_readme():
             filename = os.path.basename(filepath)
             size = format_size(os.path.getsize(filepath))
             url = f"{base_url}/{filename}"
-            return filename, url, size
-        return None, None, None
+            return url, size
+        return default_url, default_size
 
     # Windows
-    win_exe_name, win_exe_url, win_exe_size = get_file_info("Llm.Quota_*_x64-setup.exe")
-    win_msi_name, win_msi_url, win_msi_size = get_file_info("Llm.Quota_*_x64_en-US.msi")
+    win_exe_url, win_exe_size = get_file_info("Llm.Quota_*_x64-setup.exe")
+    win_msi_url, win_msi_size = get_file_info("Llm.Quota_*_x64_en-US.msi")
 
     # macOS
-    mac_uni_dmg_name, mac_uni_dmg_url, mac_uni_dmg_size = get_file_info("Llm.Quota_*_universal.dmg")
-    mac_arm_dmg_name, mac_arm_dmg_url, mac_arm_dmg_size = get_file_info("Llm.Quota_*_aarch64.dmg")
-    mac_x64_dmg_name, mac_x64_dmg_url, mac_x64_dmg_size = get_file_info("Llm.Quota_*_x64.dmg")
+    mac_uni_dmg_url, mac_uni_dmg_size = get_file_info("Llm.Quota_*_universal.dmg")
+    mac_arm_dmg_url, mac_arm_dmg_size = get_file_info("Llm.Quota_*_aarch64.dmg")
+    mac_x64_dmg_url, mac_x64_dmg_size = get_file_info("Llm.Quota_*_x64.dmg")
     
-    mac_uni_tar_name, mac_uni_tar_url, mac_uni_tar_size = get_file_info("Llm.Quota_universal.app.tar.gz")
-    mac_arm_tar_name, mac_arm_tar_url, mac_arm_tar_size = get_file_info("Llm.Quota_aarch64.app.tar.gz")
-    mac_x64_tar_name, mac_x64_tar_url, mac_x64_tar_size = get_file_info("Llm.Quota_x64.app.tar.gz")
+    mac_uni_tar_url, mac_uni_tar_size = get_file_info("Llm.Quota_universal.app.tar.gz")
+    mac_arm_tar_url, mac_arm_tar_size = get_file_info("Llm.Quota_aarch64.app.tar.gz")
+    mac_x64_tar_url, mac_x64_tar_size = get_file_info("Llm.Quota_x64.app.tar.gz")
 
     # Linux
-    lin_amd_app_name, lin_amd_app_url, lin_amd_app_size = get_file_info("Llm.Quota_*_amd64.AppImage")
-    lin_arm_app_name, lin_arm_app_url, lin_arm_app_size = get_file_info("Llm.Quota_*_aarch64.AppImage")
+    lin_amd_app_url, lin_amd_app_size = get_file_info("Llm.Quota_*_amd64.AppImage")
+    lin_arm_app_url, lin_arm_app_size = get_file_info("Llm.Quota_*_aarch64.AppImage")
     
-    lin_amd_deb_name, lin_amd_deb_url, lin_amd_deb_size = get_file_info("Llm.Quota_*_amd64.deb")
-    lin_arm_deb_name, lin_arm_deb_url, lin_arm_deb_size = get_file_info("Llm.Quota_*_arm64.deb")
+    lin_amd_deb_url, lin_amd_deb_size = get_file_info("Llm.Quota_*_amd64.deb")
+    lin_arm_deb_url, lin_arm_deb_size = get_file_info("Llm.Quota_*_arm64.deb")
     
-    lin_amd_rpm_name, lin_amd_rpm_url, lin_amd_rpm_size = get_file_info("Llm.Quota-*-1.x86_64.rpm")
-    lin_arm_rpm_name, lin_arm_rpm_url, lin_arm_rpm_size = get_file_info("Llm.Quota-*-1.aarch64.rpm")
+    lin_amd_rpm_url, lin_amd_rpm_size = get_file_info("Llm.Quota-*-1.x86_64.rpm")
+    lin_arm_rpm_url, lin_arm_rpm_size = get_file_info("Llm.Quota-*-1.aarch64.rpm")
 
-    def make_row(name, url, size, arch):
-        if not name: return ""
-        return f"| **[{name}]({url})** | {arch} | {size} |\n"
+    new_table = f"""## 🚀 Downloads
 
-    new_table = "<!-- DOWNLOAD_TABLE_START -->\n"
-    new_table += "<!-- The download table will be automatically injected here by GitHub Actions -->\n"
-    new_table += "## Downloads\n\n"
-    new_table += "Select the appropriate package for the target operating system and architecture.\n\n"
-    
-    new_table += "### 🪟 Windows\n\n"
-    new_table += "| Installer File                         | Architecture | Size    |\n"
-    new_table += "| :------------------------------------- | :----------- | :------ |\n"
-    new_table += make_row(win_exe_name, win_exe_url, win_exe_size, "x64")
-    new_table += make_row(win_msi_name, win_msi_url, win_msi_size, "x64")
+Select the appropriate package for the target operating system.
 
-    new_table += "\n### 🍎 macOS\n\n"
-    new_table += "| Installer / Archive File                | Architecture  | Size    |\n"
-    new_table += "| :-------------------------------------- | :------------ | :------ |\n"
-    new_table += make_row(mac_uni_dmg_name, mac_uni_dmg_url, mac_uni_dmg_size, "Universal")
-    new_table += make_row(mac_arm_dmg_name, mac_arm_dmg_url, mac_arm_dmg_size, "Apple Silicon")
-    new_table += make_row(mac_x64_dmg_name, mac_x64_dmg_url, mac_x64_dmg_size, "Intel x64")
-    new_table += make_row(mac_uni_tar_name, mac_uni_tar_url, mac_uni_tar_size, "Universal")
-    new_table += make_row(mac_arm_tar_name, mac_arm_tar_url, mac_arm_tar_size, "Apple Silicon")
-    new_table += make_row(mac_x64_tar_name, mac_x64_tar_url, mac_x64_tar_size, "Intel x64")
+| 🍎 macOS                                                                      | 🪟 Windows                                                       | 🐧 Linux                                                                  |
+| ----------------------------------------------------------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| [⬇️ Universal (.dmg)]({mac_uni_dmg_url}) _({mac_uni_dmg_size})_        | [⬇️ x64 (.exe)]({win_exe_url}) _({win_exe_size})_ | [⬇️ amd64 (.AppImage)]({lin_amd_app_url}) _({lin_amd_app_size})_   |
+| [⬇️ Apple Silicon (.dmg)]({mac_arm_dmg_url}) _({mac_arm_dmg_size})_    | [⬇️ x64 (.msi)]({win_msi_url}) _({win_msi_size})_ | [⬇️ aarch64 (.AppImage)]({lin_arm_app_url}) _({lin_arm_app_size})_ |
+| [⬇️ Intel x64 (.dmg)]({mac_x64_dmg_url}) _({mac_x64_dmg_size})_        |                                                                  | [⬇️ amd64 (.deb)]({lin_amd_deb_url}) _({lin_amd_deb_size})_        |
+| [⬇️ Universal (.tar.gz)]({mac_uni_tar_url}) _({mac_uni_tar_size})_     |                                                                  | [⬇️ arm64 (.deb)]({lin_arm_deb_url}) _({lin_arm_deb_size})_        |
+| [⬇️ Apple Silicon (.tar.gz)]({mac_arm_tar_url}) _({mac_arm_tar_size})_ |                                                                  | [⬇️ x86_64 (.rpm)]({lin_amd_rpm_url}) _({lin_amd_rpm_size})_       |
+| [⬇️ Intel x64 (.tar.gz)]({mac_x64_tar_url}) _({mac_x64_tar_size})_     |                                                                  | [⬇️ aarch64 (.rpm)]({lin_arm_rpm_url}) _({lin_arm_rpm_size})_      |
+"""
 
-    new_table += "\n### 🐧 Linux\n\n"
-    new_table += "| Package File                              | Architecture | Size    |\n"
-    new_table += "| :---------------------------------------- | :----------- | :------ |\n"
-    new_table += make_row(lin_amd_app_name, lin_amd_app_url, lin_amd_app_size, "amd64")
-    new_table += make_row(lin_arm_app_name, lin_arm_app_url, lin_arm_app_size, "aarch64")
-    new_table += make_row(lin_amd_deb_name, lin_amd_deb_url, lin_amd_deb_size, "amd64")
-    new_table += make_row(lin_arm_deb_name, lin_arm_deb_url, lin_arm_deb_size, "arm64")
-    new_table += make_row(lin_amd_rpm_name, lin_amd_rpm_url, lin_amd_rpm_size, "x86_64")
-    new_table += make_row(lin_arm_rpm_name, lin_arm_rpm_url, lin_arm_rpm_size, "aarch64")
-    
-    new_table += "<!-- DOWNLOAD_TABLE_END -->"
-
-    pattern = re.compile(r"<!-- DOWNLOAD_TABLE_START -->.*?<!-- DOWNLOAD_TABLE_END -->", re.DOTALL)
+    pattern = re.compile(r"## 🚀 Downloads.*?(\n---\n)", re.DOTALL)
     
     if pattern.search(content):
-        new_content = pattern.sub(new_table, content)
+        new_content = pattern.sub(new_table + r"\1", content)
         with open(readme_path, "w", encoding="utf-8") as f:
             f.write(new_content)
         print("README.md updated successfully with direct download links.")
     else:
-        print("Could not find DOWNLOAD_TABLE_START block in README.md")
+        print("Could not find ## 🚀 Downloads block in README.md")
         sys.exit(1)
 
 if __name__ == "__main__":

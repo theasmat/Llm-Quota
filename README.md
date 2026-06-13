@@ -11,6 +11,7 @@
   </a>
   <a href="https://github.com/theasmat/llm-quota/releases/latest">
     <img src="https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black" alt="Linux" />
+  </a>
   <br/>
   
   <p>
@@ -36,33 +37,58 @@ Llm Quota is a compact, high-density dashboard built with Tauri and React to man
 <br/>
 
 ## 📖 Table of Contents
+
+- [💻 Installation](#-installation)
 - [🚀 Downloads](#-downloads)
 - [✨ Features](#-features)
 - [🛠️ Tech Stack](#️-tech-stack)
-- [<img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Laptop.png" alt="Laptop" width="20" height="20" /> Installation](#installation)
+- [⚙️ Setup & Development](#️-setup--development)
 - [📷 Screenshots](#-screenshots)
 - [🤝 Contributing](#-contributing)
 - [📄 License](#-license)
 
 <br/>
 
+## 💻 Installation
+
+### Automated Install Script (macOS & Linux)
+
+The easiest way to install on macOS and Linux is by using the automated script:
+
+```bash
+curl -fsSL [https://raw.githubusercontent.com/theasmat/llm-quota/master/install.sh](https://raw.githubusercontent.com/theasmat/llm-quota/master/install.sh) | bash
+
+```
+
+### macOS (Homebrew)
+
+```bash
+brew install --no-quarantine theasmat/llm-quota/llm-quota
+
+```
+
 ## 🚀 Downloads
 
-| OS | Download Link | Notes |
-|----|--------------|-------|
-| <img src="https://skillicons.dev/icons?i=apple" width="16" /> **macOS** | [Download .dmg](https://github.com/theasmat/llm-quota/releases/latest) | Or use Homebrew: `brew install --no-quarantine theasmat/llm-quota/llm-quota` |
-| <img src="https://skillicons.dev/icons?i=windows" width="16" /> **Windows** | [Download .exe](https://github.com/theasmat/llm-quota/releases/latest) | Standalone Windows installer |
-| <img src="https://skillicons.dev/icons?i=linux" width="16" /> **Linux** | [Download .AppImage / .deb](https://github.com/theasmat/llm-quota/releases/latest) | Universal AppImage or native packages |
+Select the appropriate package for the target operating system.
 
-<br/>
+| 🍎 macOS                                                                      | 🪟 Windows                                                       | 🐧 Linux                                                                  |
+| ----------------------------------------------------------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| [⬇️ Universal (.dmg)](#) _(TBD)_        | [⬇️ x64 (.exe)](#) _(TBD)_ | [⬇️ amd64 (.AppImage)](https://github.com/theasmat/llm-quota/releases/download/4.2.2/Llm.Quota_4.2.2_amd64.AppImage) _(0 B)_   |
+| [⬇️ Apple Silicon (.dmg)](#) _(TBD)_    | [⬇️ x64 (.msi)](#) _(TBD)_ | [⬇️ aarch64 (.AppImage)](#) _(TBD)_ |
+| [⬇️ Intel x64 (.dmg)](https://github.com/theasmat/llm-quota/releases/download/4.2.2/Llm.Quota_4.2.2_x64.dmg) _(0 B)_        |                                                                  | [⬇️ amd64 (.deb)](#) _(TBD)_        |
+| [⬇️ Universal (.tar.gz)](#) _(TBD)_     |                                                                  | [⬇️ arm64 (.deb)](#) _(TBD)_        |
+| [⬇️ Apple Silicon (.tar.gz)](#) _(TBD)_ |                                                                  | [⬇️ x86_64 (.rpm)](#) _(TBD)_       |
+| [⬇️ Intel x64 (.tar.gz)](#) _(TBD)_     |                                                                  | [⬇️ aarch64 (.rpm)](#) _(TBD)_      |
+
+---
 
 ## ✨ Features
 
 - ⚡ **Local-First & Fast**: Built with Tauri and Rust for a lightweight, deeply integrated native desktop experience.
-- 📊 **High-Density Dashboard**: Ultra-compact UI designed to maximize screen real estate and give you an overview of your quotas at a glance.
-- 🔑 **Account Management**: Add, track, and monitor API keys and usage quotas securely on your local machine.
+- 📊 **High-Density Dashboard**: Ultra-compact UI designed to maximize screen real estate and give users an overview of their quotas at a glance.
+- 🔑 **Account Management**: Add, track, and monitor API keys and usage quotas securely on a local machine.
 - 🎨 **Built-in Themes**: Natively supports both Light and Dark mode with seamless Tailwind CSS integration.
-- 📥 **Export & Backup**: Export your account data easily for safekeeping.
+- 📥 **Export & Backup**: Export account data easily for safekeeping.
 
 ## 🛠️ Tech Stack
 
@@ -77,50 +103,12 @@ Llm Quota is a compact, high-density dashboard built with Tauri and React to man
 - **State Management**: Zustand
 - **Icons**: Lucide
 
-## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Laptop.png" alt="Laptop" width="30" height="30" /> Installation
-
-### Automated Install Script (macOS & Linux)
-The easiest way to install on macOS and Linux is using our automated script:
-```bash
-curl -fsSL https://raw.githubusercontent.com/theasmat/llm-quota/master/install.sh | bash
-```
-
-### macOS (Homebrew)
-```bash
-brew install --no-quarantine theasmat/llm-quota/llm-quota
-```
-
-<!-- DOWNLOAD_TABLE_START -->
-<!-- The download table will be automatically injected here by GitHub Actions -->
-## Downloads
-
-Select the appropriate package for the target operating system and architecture.
-
-### 🪟 Windows
-
-| Installer File                         | Architecture | Size    |
-| :------------------------------------- | :----------- | :------ |
-
-### 🍎 macOS
-
-| Installer / Archive File                | Architecture  | Size    |
-| :-------------------------------------- | :------------ | :------ |
-| **[Llm.Quota_4.2.2_x64.dmg](https://github.com/theasmat/llm-quota/releases/download/4.2.2/Llm.Quota_4.2.2_x64.dmg)** | Intel x64 | 0 B |
-
-### 🐧 Linux
-
-| Package File                              | Architecture | Size    |
-| :---------------------------------------- | :----------- | :------ |
-| **[Llm.Quota_4.2.2_amd64.AppImage](https://github.com/theasmat/llm-quota/releases/download/4.2.2/Llm.Quota_4.2.2_amd64.AppImage)** | amd64 | 0 B |
-<!-- DOWNLOAD_TABLE_END -->
-
----
-
-## Setup & Development
+## ⚙️ Setup & Development
 
 ### Prerequisites
 
-Ensure you have the following installed on your system:
+Ensure the following are installed on the system:
+
 - [Node.js](https://nodejs.org/) (v16+)
 - [pnpm](https://pnpm.io/)
 - [Rust](https://www.rust-lang.org/tools/install)
@@ -128,68 +116,58 @@ Ensure you have the following installed on your system:
 ### Local Build
 
 1. Clone the repository and navigate to the project directory:
-   ```bash
-   git clone https://github.com/theasmat/llm-quota.git
-   cd llm-quota
-   ```
+
+```bash
+git clone [https://github.com/theasmat/llm-quota.git](https://github.com/theasmat/llm-quota.git)
+cd llm-quota
+
+```
 
 2. Install dependencies:
-   ```bash
-   pnpm install
-   ```
+
+```bash
+pnpm install
+
+```
 
 3. Run the development server:
-   ```bash
-   pnpm tauri dev
-   ```
+
+```bash
+pnpm tauri dev
+
+```
 
 ### Build for Production
 
-To build the application for your operating system:
+To build the application for the target operating system:
 
 ```bash
 pnpm tauri build
+
 ```
 
 The compiled binaries will be available in the `src-tauri/target/release` directory.
 
-<br/>
-
 ## 📷 Screenshots
 
 > **Note**: These screenshots demonstrate the ultra-compact UI in dark and light themes.
-> 
-> <p align="center">
-  <img src="assets/screenshots/gemini.png" width="45%" alt="Dashboard Dark Theme" />
-  &nbsp;&nbsp;&nbsp;
-  <img src="assets/screenshots/home.png" width="45%" alt="Dashboard Light Theme" />
-</p>
-
-<br/>
 
 ## 🤝 Contributing
 
-Contributions, issues, and feature requests are welcome!  
+Contributions, issues, and feature requests are welcome!
+
 Feel free to check out the [issues page](https://github.com/theasmat/llm-quota/issues).
 
 1. **Fork** the project
-2. **Create** your feature branch (`git checkout -b feature/AmazingFeature`)
-3. **Commit** your changes (`git commit -m 'Add some AmazingFeature'`)
+2. **Create** a feature branch (`git checkout -b feature/AmazingFeature`)
+3. **Commit** changes (`git commit -m 'Add some AmazingFeature'`)
 4. **Push** to the branch (`git push origin feature/AmazingFeature`)
 5. **Open** a Pull Request
 
-<br/>
-
 ## 💬 Feedback & Support
 
-If you have any feedback, please reach out by opening an issue or starting a discussion. If you like the project, please give it a ⭐️!
-
-<br/>
+For feedback, please reach out by opening an issue or starting a discussion. If a user likes the project, a ⭐️ is always appreciated!
 
 ## 📄 License
 
-This project is licensed under the [MIT License](LICENSE).
-
-<div align="center">
-  <sub>Built with ❤️ by Asmat</sub>
-</div>
+This project is licensed under the [MIT License](https://www.google.com/search?q=LICENSE).
