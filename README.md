@@ -22,9 +22,9 @@ Llm Quota is a compact, high-density dashboard built with Tauri and React to man
 
 | OS | Download Link | Notes |
 |----|--------------|-------|
-| 🍏 **macOS** | [Download .dmg](https://github.com/theasmat/llm-quota/releases/latest) | Or use Homebrew: `brew install --no-quarantine theasmat/llm-quota/llm-quota` |
-| 🪟 **Windows** | [Download .exe](https://github.com/theasmat/llm-quota/releases/latest) | Standalone Windows installer |
-| 🐧 **Linux** | [Download .AppImage / .deb](https://github.com/theasmat/llm-quota/releases/latest) | Universal AppImage or native packages |
+| <img src="https://cdn.simpleicons.org/apple/black" width="16" /> **macOS** | [Download .dmg](https://github.com/theasmat/llm-quota/releases/latest) | Or use Homebrew: `brew install --no-quarantine theasmat/llm-quota/llm-quota` |
+| <img src="https://cdn.simpleicons.org/windows/0078D6" width="16" /> **Windows** | [Download .exe](https://github.com/theasmat/llm-quota/releases/latest) | Standalone Windows installer |
+| <img src="https://cdn.simpleicons.org/linux/black" width="16" /> **Linux** | [Download .AppImage / .deb](https://github.com/theasmat/llm-quota/releases/latest) | Universal AppImage or native packages |
 
 <br/>
 
