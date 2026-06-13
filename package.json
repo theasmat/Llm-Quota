@@ -1,6 +1,6 @@
 {
   "version": "4.2.2",
-  "name": "antigravity-tools",
+  "name": "llm-quota",
   "type": "module",
   "private": true,
   "scripts": {
