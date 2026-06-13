@@ -79,25 +79,40 @@ Llm Quota is a compact, high-density dashboard built with Tauri and React to man
 
 ## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Laptop.png" alt="Laptop" width="30" height="30" /> Installation
 
-<!-- DOWNLOAD_TABLE_START -->
-<!-- The download table will be automatically injected here by GitHub Actions -->
-| Architecture / OS | 🍎 macOS | 🪟 Windows | 🐧 Linux |
-|:---:|:---:|:---:|:---:|
-| **x86_64 (Intel/AMD)** | [⬇️ Download .dmg](https://github.com/theasmat/llm-quota/releases/download/0.1.0/Llm%20Quota_4.2.2_x64.dmg) | [⬇️ Download .exe](https://github.com/theasmat/llm-quota/releases/download/0.1.0/Llm%20Quota_4.2.2_x64-setup.exe) | [⬇️ Download .AppImage](https://github.com/theasmat/llm-quota/releases/download/0.1.0/llm-quota_4.2.2_amd64.AppImage) |
-| **arm64 (Apple Silicon/ARM)** | [⬇️ Download .dmg](https://github.com/theasmat/llm-quota/releases/download/0.1.0/Llm%20Quota_4.2.2_aarch64.dmg) | [⬇️ Download .exe](https://github.com/theasmat/llm-quota/releases/download/0.1.0/Llm%20Quota_4.2.2_arm64-setup.exe) | [⬇️ Download .AppImage](https://github.com/theasmat/llm-quota/releases/download/0.1.0/llm-quota_4.2.2_aarch64.AppImage) |
-| **Universal (All)** | [⬇️ Download .dmg](https://github.com/theasmat/llm-quota/releases/download/0.1.0/Llm%20Quota_4.2.2_universal.dmg) | - | - |
-<!-- DOWNLOAD_TABLE_END -->
+### Automated Install Script (macOS & Linux)
+The easiest way to install on macOS and Linux is using our automated script:
+```bash
+curl -fsSL https://raw.githubusercontent.com/theasmat/llm-quota/master/install.sh | bash
+```
 
-### Alternative: macOS (Homebrew)
-The easiest way to install on macOS is using our Homebrew tap:
+### macOS (Homebrew)
 ```bash
 brew install --no-quarantine theasmat/llm-quota/llm-quota
 ```
 
-### Alternative: Automated Install Script (macOS & Linux)
-```bash
-curl -fsSL https://raw.githubusercontent.com/theasmat/llm-quota/master/install.sh | bash
-```
+<!-- DOWNLOAD_TABLE_START -->
+<!-- The download table will be automatically injected here by GitHub Actions -->
+## Downloads
+
+Select the appropriate package for the target operating system and architecture.
+
+### 🪟 Windows
+
+| Installer File                         | Architecture | Size    |
+| :------------------------------------- | :----------- | :------ |
+
+### 🍎 macOS
+
+| Installer / Archive File                | Architecture  | Size    |
+| :-------------------------------------- | :------------ | :------ |
+| **[Llm.Quota_4.2.2_x64.dmg](https://github.com/theasmat/llm-quota/releases/download/4.2.2/Llm.Quota_4.2.2_x64.dmg)** | Intel x64 | 0 B |
+
+### 🐧 Linux
+
+| Package File                              | Architecture | Size    |
+| :---------------------------------------- | :----------- | :------ |
+| **[Llm.Quota_4.2.2_amd64.AppImage](https://github.com/theasmat/llm-quota/releases/download/4.2.2/Llm.Quota_4.2.2_amd64.AppImage)** | amd64 | 0 B |
+<!-- DOWNLOAD_TABLE_END -->
 
 ---
 
