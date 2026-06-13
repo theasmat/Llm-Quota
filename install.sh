@@ -145,7 +145,7 @@ get_version() {
 
 # Build download URL based on platform and package manager
 build_download_url() {
-    local base_url="https://github.com/${REPO}/releases/download/v${RELEASE_VERSION}"
+    local base_url="https://github.com/${REPO}/releases/download/${RELEASE_VERSION}"
 
     case "$PLATFORM" in
         linux)
