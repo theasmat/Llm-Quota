@@ -263,7 +263,7 @@ export default function MiniView() {
                                 <div className="space-y-4 !mt-0">
                                     {renderModelRow(geminiProModel, 'Gemini 3.1 Pro', 'emerald')}
                                     {renderModelRow(geminiFlashModel, 'Gemini 3 Flash', 'emerald')}
-                                    {renderModelRow(claudeModel, t('common.claude_series', 'Claude 系列'), 'cyan')}
+                                    {renderModelRow(claudeModel, t('common.claude_series', 'Claude '), 'cyan')}
 
                                     {!geminiProModel && !geminiFlashModel && !claudeModel && (
                                         <div className="text-center py-4 text-xs text-gray-400">

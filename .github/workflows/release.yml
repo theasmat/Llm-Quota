@@ -59,11 +59,11 @@ jobs:
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         run: npm run tauri build -- ${{ matrix.args }}
 
-      # 3. 处理 macOS 架构重命名冲突 (解决 422 Already Exists)
+      # 3.  macOS  ( 422 Already Exists)
       - name: Rename macOS assets for architecture
         if: matrix.platform == 'macos-latest'
         run: |
-          # 识别架构
+          # 
           if [[ "${{ matrix.args }}" == *"--target aarch64-apple-darwin"* ]]; then
             ARCH="aarch64"
           elif [[ "${{ matrix.args }}" == *"--target x86_64-apple-darwin"* ]]; then
@@ -76,17 +76,17 @@ jobs:
           
           echo "Detected architecture: $ARCH"
           
-          # 进入产物目录
+          # 
           cd src-tauri/target/*/release/bundle/macos/
           
-          # 重命名 .app.tar.gz 和 .sig
+          #  .app.tar.gz  .sig
           if [ -f "Llm Quota.app.tar.gz" ]; then
             mv "Llm Quota.app.tar.gz" "Llm Quota_${ARCH}.app.tar.gz"
             mv "Llm Quota.app.tar.gz.sig" "Llm Quota_${ARCH}.app.tar.gz.sig"
             echo "Renamed assets to append Arch: $ARCH"
           fi
           
-          # 更新对应的 updater.json (指向重命名后的文件)
+          #  updater.json ()
           UPDATER_JSON="../../../updater/install.json"
           if [ ! -f "$UPDATER_JSON" ]; then
              UPDATER_JSON=$(find ../../../updater -name "*.json" | head -n 1)
@@ -97,7 +97,7 @@ jobs:
             sed -i '' "s/Llm%20Quota.app.tar.gz/Llm%20Quota_${ARCH}.app.tar.gz/g" "$UPDATER_JSON"
           fi
 
-      # 1. 上传 updater.json 到 Artifacts (供后续合并使用)
+      # 1.  updater.json  Artifacts ()
       - name: Upload updater json
         uses: actions/upload-artifact@v4
         with:
@@ -105,7 +105,7 @@ jobs:
           path: src-tauri/target/**/release/bundle/updater/*.json
           if-no-files-found: warn
 
-      # 2. 上传安装包到 Artifacts (供后续统一发布任务下载)
+      # 2.  Artifacts ()
       - name: Upload Release Artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -136,7 +136,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 下载所有构建产物 (仅限 release 相关的 assets 和 updater)
+      #  ( release  assets  updater)
       - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
@@ -237,7 +237,7 @@ jobs:
           echo "Generated updater.json:"
           cat updater.json
 
-      # 使用 ncipollo/release-action 进行统一发布，支持稳健覆盖
+      #  ncipollo/release-action ，
       - name: Create or Update GitHub Release
         uses: ncipollo/release-action@v1
         if: startsWith(github.ref, 'refs/tags/')

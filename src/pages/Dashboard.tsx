@@ -30,7 +30,7 @@ function Dashboard() {
         fetchCurrentAccount();
     }, []);
 
-    // 计算统计数据
+    // 
     const stats = useMemo(() => {
         const getGeminiProQuota = (a: Account) =>
             (a.quota?.models || [])
@@ -83,7 +83,7 @@ function Dashboard() {
 
     const handleAddAccount = async (email: string, refreshToken: string) => {
         await addAccount(email, refreshToken);
-        await fetchAccounts(); // 刷新列表
+        await fetchAccounts(); // 
     };
 
     const [isRefreshing, setIsRefreshing] = useState(false);
@@ -94,7 +94,7 @@ function Dashboard() {
         setIsRefreshing(true);
         try {
             await refreshQuota(currentAccount.id);
-            // 刷新成功后重新获取最新数据
+            // 
             await fetchCurrentAccount();
             showToast(t('dashboard.toast.refresh_success'), 'success');
         } catch (error) {
@@ -139,7 +139,7 @@ function Dashboard() {
                 await invoke('save_text_file', { path, content });
                 showToast(t('dashboard.toast.export_success', { path }), 'success');
             } else {
-                // Web 模式：使用浏览器下载
+                // Web ：
                 const blob = new Blob([content], { type: 'application/json' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -168,14 +168,14 @@ function Dashboard() {
                 onMouseMove={() => console.log('Mouse moving over Dashboard')}
                 style={{ position: 'relative', zIndex: 1 }}
             >
-                {/* 问候语和操作按钮 */}
+                {/*  */}
                 <div
                     className="flex justify-between items-center"
                 >
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900 dark:text-base-content">
                             {currentAccount
-                                ? t('dashboard.hello').replace('用户', currentAccount.name || currentAccount.email.split('@')[0])
+                                ? t('dashboard.hello').replace('', currentAccount.name || currentAccount.email.split('@')[0])
                                 : t('dashboard.hello')
                             }
                         </h1>
@@ -194,7 +194,7 @@ function Dashboard() {
                     </div>
                 </div>
 
-                {/* 统计卡片 - 5 columns on medium screens and up */}
+                {/*  - 5 columns on medium screens and up */}
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
                     <div className="bg-white dark:bg-base-100 rounded-lg p-2 shadow-sm border border-gray-100 dark:border-base-200">
                         <div className="flex items-center justify-between mb-2">
@@ -263,7 +263,7 @@ function Dashboard() {
                     </div>
                 </div>
 
-                {/* 双栏布局 */}
+                {/*  */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <CurrentAccount
                         account={currentAccount}
@@ -275,7 +275,7 @@ function Dashboard() {
                     />
                 </div>
 
-                {/* 快速链接 */}
+                {/*  */}
                 <div className="grid grid-cols-2 gap-3">
                     <button
                         className="bg-indigo-50 dark:bg-indigo-900/20 rounded-lg p-2 shadow-sm border border-indigo-100 dark:border-indigo-900/30 hover:border-indigo-300 dark:hover:border-indigo-700 hover:shadow-md transition-all flex items-center justify-between group"

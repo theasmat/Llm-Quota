@@ -1,6 +1,6 @@
 /**
- * 账号表格组件
- * 支持拖拽排序功能，用户可以通过拖拽行来调整账号顺序
+ * 
+ * ，
  */
 import { useMemo, useState } from 'react';
 import {
@@ -49,7 +49,7 @@ import { MODEL_CONFIG, sortModels } from '../../config/modelConfig';
 import { getValidationBlockedStatusLabel } from './accountValidationStatus';
 
 // ============================================================================
-// 类型定义
+// 
 // ============================================================================
 
 interface AccountTableProps {
@@ -65,7 +65,7 @@ interface AccountTableProps {
     onDelete: (accountId: string) => void;
     onWarmup?: (accountId: string) => void;
     onUpdateLabel?: (accountId: string, label: string) => void;
-    /** 拖拽排序回调，当用户完成拖拽时触发 */
+    /** ， */
     onReorder?: (accountIds: string[]) => void;
     onViewError: (accountId: string) => void;
 }
@@ -101,13 +101,13 @@ interface AccountRowContentProps {
 }
 
 // ============================================================================
-// 辅助函数
+// 
 // ============================================================================
 
 
 
 // ============================================================================
-// 模型分组配置
+// 
 // ============================================================================
 
 const MODEL_GROUPS = {
@@ -170,17 +170,17 @@ function isModelProtected(protectedModels: string[] | undefined, modelName: stri
         return isGroupProtected(MODEL_GROUPS.GEMINI_FLASH);
     }
 
-    // 兜底直接检查 (Strict check for exact match or normalized ID)
+    //  (Strict check for exact match or normalized ID)
     return protectedModels.includes(lowerName);
 }
 
 // ============================================================================
-// 子组件
+// 
 // ============================================================================
 
 /**
- * 可拖拽的表格行组件
- * 使用 @dnd-kit/sortable 实现拖拽功能
+ * 
+ *  @dnd-kit/sortable 
  */
 function SortableAccountRow({
     account,
@@ -224,7 +224,7 @@ function SortableAccountRow({
                 !isDragging && "hover:bg-white/60 dark:hover:bg-zinc-800/60"
             )}
         >
-            {/* 拖拽手柄 */}
+            {/*  */}
             <td className="pl-1 py-0 w-8 align-middle">
                 <div
                     {...attributes}
@@ -235,7 +235,7 @@ function SortableAccountRow({
                     <GripVertical className="w-4 h-4" />
                 </div>
             </td>
-            {/* 复选框 */}
+            {/*  */}
             <td className="px-1 py-0 w-10 align-middle">
                 <input
                     type="checkbox"
@@ -262,8 +262,8 @@ function SortableAccountRow({
 }
 
 /**
- * 账号行内容组件
- * 渲染邮箱、配额、最后使用时间和操作按钮等列
+ * 
+ * 、、
  */
 function AccountRowContent({
     account,
@@ -281,7 +281,7 @@ function AccountRowContent({
     const { showAllQuotas } = useConfigStore();
     const validationBlockedLabel = getValidationBlockedStatusLabel(account.validation_blocked_reason, t);
 
-    // 自定义标签编辑状态
+    // 
     const [isEditingLabel, setIsEditingLabel] = useState(false);
     const [labelInput, setLabelInput] = useState(account.custom_label || '');
 
@@ -305,12 +305,12 @@ function AccountRowContent({
         }
     };
 
-    // 使用统一的模型配置
+    // 
 
-    // 获取要显示的模型列表
+    // 
     const pinnedModels = Object.keys(MODEL_CONFIG);
 
-    // 根据 show_all 状态决定显示哪些模型
+    //  show_all 
     const uniqueLabels = new Set<string>();
     const displayModels = sortModels(
         (showAllQuotas
@@ -337,13 +337,13 @@ function AccountRowContent({
                 };
             }).filter(Boolean) as any[]
         ).filter(m => {
-            // 过滤特定的 Claude/Gemini 思考变体 (在列表页隐藏)
+            //  Claude/Gemini  ()
             const isHiddenThinking = m.id.includes('thinking');
 
             if (isHiddenThinking) return false;
 
-            // 基于标签去重 (例如 G3.1 Pro 只显示一次)
-            // 优先显示有配额数据的 ID
+            //  ( G3.1 Pro )
+            //  ID
             const labelKey = `${m.label}-${m.protectedKey}`;
             if (uniqueLabels.has(labelKey)) {
                 return false;
@@ -355,7 +355,7 @@ function AccountRowContent({
             return true;
         })
     ).filter((m, index, self) => {
-        // 第二次过滤：确保即使没有数据的重复 Label 也只保留一个
+        // ： Label 
         const labelKey = `${m.label}-${m.protectedKey}`;
         return self.findIndex(t => `${t.label}-${t.protectedKey}` === labelKey) === index;
     });
@@ -363,7 +363,7 @@ function AccountRowContent({
 
     return (
         <>
-            {/* 邮箱列 */}
+            {/*  */}
             <td className="px-1 py-[1px] align-middle border-b border-gray-100 dark:border-white/5">
                 <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
                     <span className={cn(
@@ -404,7 +404,7 @@ function AccountRowContent({
                         )}
 
 
-                        {/* 订阅类型徽章 */}
+                        {/*  */}
                         {account.quota?.subscription_tier && (() => {
                             const tier = account.quota.subscription_tier.toLowerCase();
                             if (tier.includes('ultra')) {
@@ -430,14 +430,14 @@ function AccountRowContent({
                                 );
                             }
                         })()}
-                        {/* 自定义标签 */}
+                        {/*  */}
                         {account.custom_label && !isEditingLabel && (
                             <span className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300 text-[10px] font-bold shadow-sm border border-orange-200/50 dark:border-orange-800/50">
                                 <Tag className="w-2.5 h-2.5" />
                                 {account.custom_label}
                             </span>
                         )}
-                        {/* 标签编辑输入框 */}
+                        {/*  */}
                         {isEditingLabel && (
                             <div className="flex items-center gap-1">
                                 <input
@@ -470,7 +470,7 @@ function AccountRowContent({
                 </div>
             </td>
 
-            {/* 模型配额列 */}
+            {/*  */}
             <td className="px-1 py-[1px] align-middle border-b border-gray-100 dark:border-white/5">
                 {isDisabled || account.quota?.is_forbidden || account.validation_blocked ? (
                     <div className={cn(
@@ -523,7 +523,7 @@ function AccountRowContent({
                 )}
             </td>
 
-            {/* 最后使用时间列 */}
+            {/*  */}
             <td className="px-1 py-[1px] align-middle border-b border-gray-100 dark:border-white/5 w-[140px]">
                 <div className="flex flex-col">
                     <span className="text-[11px] font-medium text-gray-600 dark:text-gray-400 font-mono whitespace-nowrap">
@@ -535,12 +535,12 @@ function AccountRowContent({
                 </div>
             </td>
 
-            {/* 操作列 */}
+            {/*  */}
             <td className={cn(
                 "px-1 py-[1px] sticky right-0 z-10 shadow-[-12px_0_12px_-12px_rgba(0,0,0,0.1)] dark:shadow-[-12px_0_12px_-12px_rgba(255,255,255,0.05)] text-center align-middle border-b border-gray-100 dark:border-white/5",
-                // 动态背景色处理
+                // 
                 isCurrent
-                    ? "bg-[#f1f6ff] dark:bg-[#1e2330]" // 接近 blue-50/50 的实色
+                    ? "bg-[#f1f6ff] dark:bg-[#1e2330]" //  blue-50/50 
                     : "bg-white dark:bg-base-100",
                 !isCurrent && "group-hover:bg-gray-50 dark:group-hover:bg-base-200"
             )}>
@@ -553,7 +553,7 @@ function AccountRowContent({
                         <Info className="w-3 h-3" />
                     </button>
                     
-                    {/* 自定义标签按钮 */}
+                    {/*  */}
                     {onUpdateLabel && (
                         <button
                             className={cn(
@@ -600,12 +600,12 @@ function AccountRowContent({
 }
 
 // ============================================================================
-// 主组件
+// 
 // ============================================================================
 
 /**
- * 账号表格组件
- * 支持拖拽排序、多选、批量操作等功能
+ * 
+ * 、、
  */
 function AccountTable({
     accounts,
@@ -625,12 +625,12 @@ function AccountTable({
     const { t } = useTranslation();
 
     const [activeId, setActiveId] = useState<string | null>(null);
-    // showAllQuotas 已经在 useConfigStore 中解构获取
+    // showAllQuotas  useConfigStore 
 
-    // 配置拖拽传感器
+    // 
     const sensors = useSensors(
         useSensor(PointerSensor, {
-            activationConstraint: { distance: 8 }, // 需要移动 8px 才触发拖拽
+            activationConstraint: { distance: 8 }, //  8px 
         }),
         useSensor(KeyboardSensor, {
             coordinateGetter: sortableKeyboardCoordinates,
@@ -721,7 +721,7 @@ function AccountTable({
                 </table >
             </div >
 
-            {/* 拖拽悬浮预览层 */}
+            {/*  */}
             <DragOverlay>
                 {
                     activeAccount ? (

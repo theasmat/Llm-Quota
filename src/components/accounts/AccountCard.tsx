@@ -38,7 +38,7 @@ interface AccountCardProps {
     onViewError: () => void;
 }
 
-// 使用统一的模型配置
+// 
 const DEFAULT_MODELS = Object.entries(MODEL_CONFIG).map(([id, config]) => ({
     id,
     label: config.label,
@@ -52,7 +52,7 @@ function AccountCard({ account, selected, onSelect, isCurrent: propIsCurrent, is
     const isDisabled = Boolean(account.disabled);
     const validationBlockedLabel = getValidationBlockedStatusLabel(account.validation_blocked_reason, t);
 
-    // 自定义标签编辑状态
+    // 
     const [isEditingLabel, setIsEditingLabel] = useState(false);
     const [labelInput, setLabelInput] = useState(account.custom_label || '');
 
@@ -85,9 +85,9 @@ function AccountCard({ account, selected, onSelect, isCurrent: propIsCurrent, is
 
         // Get all models from account (source of truth)
         const accountModels = account.quota?.models?.map(m => {
-            // 注意：DEFAULT_MODELS 现在应该包含 shortLabel，我们需要确保它被正确映射
-            // 但 DEFAULT_MODELS 是从 MODEL_CONFIG 生成的，我们需要确保它包含 shortLabel
-            // 这里为了安全，直接从 MODEL_CONFIG 获取
+            // ：DEFAULT_MODELS  shortLabel，
+            //  DEFAULT_MODELS  MODEL_CONFIG ， shortLabel
+            // ， MODEL_CONFIG 
             const fullConfig = MODEL_CONFIG[m.name.toLowerCase()];
             return {
                 id: m.name,
@@ -109,12 +109,12 @@ function AccountCard({ account, selected, onSelect, isCurrent: propIsCurrent, is
                 models = accountModels.filter(m => pinned.includes(m.id));
             } else {
                 // Default fallback: show known default models, plus we show all dynamic pinned models
-                // 暂时退化：如果没有 config 就不阻拦了？不，没有 pinned 就显示内置+有 display_name 的。
+                // ： config ？， pinned + display_name 。
                 models = accountModels.filter(m => DEFAULT_MODELS.some(d => d.id === m.id) || m.data.display_name);
             }
         }
 
-        // 应用排序并过滤过期模型
+        // 
         return sortModels(models).filter(m => m.id !== 'claude-sonnet-4-6-thinking' && m.id !== 'claude-sonnet-4-5-thinking' && m.id !== 'claude-opus-4-5-thinking');
     }, [config, account, showAllQuotas]);
 
@@ -131,7 +131,7 @@ function AccountCard({ account, selected, onSelect, isCurrent: propIsCurrent, is
                 : "glass-panel glass-panel-hover",
             (isRefreshing || isDisabled) && "opacity-60"
         )}>
-            {/* 动态渐变背景效果 */}
+            {/*  */}
             {isCurrent && <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent pointer-events-none" />}
 
             {/* Header: Checkbox + Email + Badges */}
@@ -178,7 +178,7 @@ function AccountCard({ account, selected, onSelect, isCurrent: propIsCurrent, is
                                     {validationBlockedLabel.toUpperCase()}
                                 </span>
                             )}
-                            {/* 订阅类型徽章 */}
+                            {/*  */}
                             {account.quota?.subscription_tier && (() => {
                                 const tier = account.quota.subscription_tier.toLowerCase();
                                 if (tier.includes('ultra')) {
@@ -204,7 +204,7 @@ function AccountCard({ account, selected, onSelect, isCurrent: propIsCurrent, is
                                     );
                                 }
                             })()}
-                            {/* 自定义标签 */}
+                            {/*  */}
                             {account.custom_label && (
                                 <span className="flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300 text-[9px] font-bold shadow-sm border border-orange-200/50 dark:border-orange-800/50">
                                     <Tag className="w-2.5 h-2.5" />
@@ -220,7 +220,7 @@ function AccountCard({ account, selected, onSelect, isCurrent: propIsCurrent, is
             </div>
 
 
-            {/* 配额展示 */}
+            {/*  */}
             <div className="flex-1 px-2 mb-2 overflow-y-auto scrollbar-none">
                 {isDisabled || account.quota?.is_forbidden || account.validation_blocked ? (
                     <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 h-full py-4 text-center">
@@ -262,7 +262,7 @@ function AccountCard({ account, selected, onSelect, isCurrent: propIsCurrent, is
 
             {/* Footer: Actions Only */}
             <div className="flex-none flex items-center justify-center pt-2 pb-1 border-t border-gray-100 dark:border-base-200">
-                {/* 标签编辑弹出框 */}
+                {/*  */}
                 {isEditingLabel && (
                     <div className="absolute inset-0 bg-white/95 dark:bg-base-100/95 rounded-xl z-10 flex items-center justify-center p-4">
                         <div className="flex items-center gap-2 w-full max-w-xs">
@@ -302,7 +302,7 @@ function AccountCard({ account, selected, onSelect, isCurrent: propIsCurrent, is
                         <Info className="w-3.5 h-3.5" />
                     </button>
                     
-                    {/* 自定义标签按钮 */}
+                    {/*  */}
                     {onUpdateLabel && (
                         <button
                             className={cn(

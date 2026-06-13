@@ -8,7 +8,7 @@ use std::os::windows::process::CommandExt;
 const CREATE_NO_WINDOW: u32 = 0x08000000;
 
 pub trait CommandExtWrapper {
-    /// 在 Windows 下为命令添加 CREATE_NO_WINDOW 标志，隐藏黑框
+    ///  Windows  CREATE_NO_WINDOW ，
     fn creation_flags_windows(&mut self) -> &mut Self;
 }
 

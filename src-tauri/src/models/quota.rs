@@ -1,13 +1,13 @@
 use serde::{Deserialize, Serialize};
 
-/// 模型配额信息
+/// 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ModelQuota {
     pub name: String,
-    pub percentage: i32, // 剩余百分比 0-100
+    pub percentage: i32, //  0-100
     pub reset_time: String,
 
-    // -- 动态参数解析与持久化 --
+    // --  --
     #[serde(skip_serializing_if = "Option::is_none")]
     pub display_name: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -26,20 +26,20 @@ pub struct ModelQuota {
     pub supported_mime_types: Option<std::collections::HashMap<String, bool>>,
 }
 
-/// 配额数据结构
+/// 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct QuotaData {
     pub models: Vec<ModelQuota>,
     pub last_updated: i64,
     #[serde(default)]
     pub is_forbidden: bool,
-    /// 禁止访问的原因 (403 详细信息)
+    ///  (403 )
     #[serde(default)]
     pub forbidden_reason: Option<String>,
-    /// 订阅等级 (FREE/PRO/ULTRA)
+    ///  (FREE/PRO/ULTRA)
     #[serde(default)]
     pub subscription_tier: Option<String>,
-    /// 模型淘汰重定向规则表 (old_model_id -> new_model_id)
+    ///  (old_model_id -> new_model_id)
     #[serde(default)]
     pub model_forwarding_rules: std::collections::HashMap<String, String>,
 }

@@ -1,21 +1,21 @@
 #!/bin/bash
 
-# 关闭已集成到 v4.0.3 的 PR 脚本
-# 使用前请确保已安装并登录 GitHub CLI: brew install gh && gh auth login
+#  v4.0.3  PR 
+#  GitHub CLI: brew install gh && gh auth login
 
 REPO="lbjlaq/Antigravity-Manager"
 VERSION="v4.0.3"
 
-# 感谢消息模板
-THANK_YOU_MESSAGE="感谢您的贡献！🎉
+# 
+THANK_YOU_MESSAGE="！🎉
 
-此 PR 的更改已被手动集成到 ${VERSION} 版本中。
+ PR  ${VERSION} 。
 
-相关更新已包含在以下文件中：
-- README.md 的版本更新日志
-- 贡献者列表
+：
+- README.md 
+- 
 
-再次感谢您对 Antigravity Tools 项目的支持！
+ Antigravity Tools ！
 
 ---
 
@@ -30,86 +30,86 @@ The updates are documented in:
 Thank you again for your support of the Antigravity Tools project!"
 
 echo "================================================"
-echo "关闭已集成到 ${VERSION} 的 PR"
+echo " ${VERSION}  PR"
 echo "================================================"
 echo ""
 
-# PR 列表：格式为 "PR号|作者|标题"
+# PR ： "PR||"
 PRS_LIST=(
     "825|IamAshrafee|[Internationalization] Device Fingerprint Dialog localization"
     "822|Koshikai|[Japanese] Add missing translations and refine terminology",
     "798|vietnhatthai|[Translation Fix] Correct spelling error in Vietnamese settings",
-    "846|lengjingxu|[核心功能] 客户端热更新与 Token 统计系统",
+    "846|lengjingxu|[]  Token ",
     "949|lbjlaq|Streaming chunks order fix",
     "950|lbjlaq|[Fix] Remove redundant code and update README",
-    "973|Mag1cFall|fix: 修复 Windows 平台启动参数不生效的问题"
+    "973|Mag1cFall|fix:  Windows "
 )
 
-# 检查 GitHub CLI 是否已安装
+#  GitHub CLI 
 if ! command -v gh &> /dev/null; then
-    echo "❌ GitHub CLI 未安装"
+    echo "❌ GitHub CLI "
     echo ""
-    echo "请先安装 GitHub CLI:"
+    echo " GitHub CLI:"
     echo "  brew install gh"
     echo ""
-    echo "然后登录:"
+    echo ":"
     echo "  gh auth login"
     echo ""
     exit 1
 fi
 
-# 检查是否已登录
+# 
 if ! gh auth status &> /dev/null; then
-    echo "❌ 未登录 GitHub CLI"
+    echo "❌  GitHub CLI"
     echo ""
-    echo "请先登录:"
+    echo ":"
     echo "  gh auth login"
     echo ""
     exit 1
 fi
 
-echo "✅ GitHub CLI 已就绪"
+echo "✅ GitHub CLI "
 echo ""
 
-# 遍历并处理每个 PR
+#  PR
 for item in "${PRS_LIST[@]}"; do
     PR_NUM=$(echo "$item" | cut -d'|' -f1)
     AUTHOR=$(echo "$item" | cut -d'|' -f2)
     TITLE=$(echo "$item" | cut -d'|' -f3)
     
     echo "----------------------------------------"
-    echo "处理 PR #${PR_NUM}: ${TITLE}"
-    echo "作者: @${AUTHOR}"
+    echo " PR #${PR_NUM}: ${TITLE}"
+    echo ": @${AUTHOR}"
     echo "----------------------------------------"
     
-    # 添加感谢评论
-    echo "📝 添加感谢评论..."
+    # 
+    echo "📝 ..."
     gh pr comment ${PR_NUM} --repo ${REPO} --body "${THANK_YOU_MESSAGE}"
     
     if [ $? -eq 0 ]; then
-        echo "✅ 评论已添加"
+        echo "✅ "
     else
-        echo "❌ 评论添加失败"
+        echo "❌ "
         continue
     fi
     
-    # 关闭 PR
-    echo "🔒 关闭 PR..."
-    gh pr close ${PR_NUM} --repo ${REPO} --comment "已集成到 ${VERSION}，关闭此 PR。"
+    #  PR
+    echo "🔒  PR..."
+    gh pr close ${PR_NUM} --repo ${REPO} --comment " ${VERSION}， PR。"
     
     if [ $? -eq 0 ]; then
-        echo "✅ PR #${PR_NUM} 已关闭"
+        echo "✅ PR #${PR_NUM} "
     else
-        echo "❌ PR #${PR_NUM} 关闭失败"
+        echo "❌ PR #${PR_NUM} "
     fi
     
     echo ""
-    sleep 2  # 避免 API 限流
+    sleep 2  #  API 
 done
 
 echo "================================================"
-echo "✅ 所有 PR 处理完成！"
+echo "✅  PR ！"
 echo "================================================"
 echo ""
-echo "请访问以下链接查看结果："
+echo "："
 echo "https://github.com/${REPO}/pulls?q=is%3Apr+is%3Aclosed"

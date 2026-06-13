@@ -59,7 +59,7 @@ function CurrentAccount({ account, onSwitch }: CurrentAccountProps) {
                         <Mail className="w-3.5 h-3.5 text-gray-400" />
                         <span className="text-sm font-medium text-gray-700 dark:text-gray-300 truncate">{account.email}</span>
                     </div>
-                    {/* 订阅类型 */}
+                    {/*  */}
                     {account.quota?.subscription_tier && (() => {
                         const tier = account.quota.subscription_tier.toLowerCase();
                         if (tier.includes('ultra')) {
@@ -85,7 +85,7 @@ function CurrentAccount({ account, onSwitch }: CurrentAccountProps) {
                             );
                         }
                     })()}
-                    {/* 自定义标签 */}
+                    {/*  */}
                     {account.custom_label && (
                         <span className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 text-[10px] font-bold shadow-sm shrink-0">
                             <Tag className="w-2.5 h-2.5" />
@@ -94,7 +94,7 @@ function CurrentAccount({ account, onSwitch }: CurrentAccountProps) {
                     )}
                 </div>
 
-                {/* Gemini Pro 配额 */}
+                {/* Gemini Pro  */}
                 {geminiProModel && (
                     <div className="space-y-1.5">
                         <div className="flex justify-between items-baseline">
@@ -124,7 +124,7 @@ function CurrentAccount({ account, onSwitch }: CurrentAccountProps) {
                         </div>
                     </div>
                 )}
-                {/* Gemini 3 Pro Image 配额 */}
+                {/* Gemini 3 Pro Image  */}
                 {geminiImageModel && (
                     <div className="space-y-1.5">
                         <div className="flex justify-between items-baseline">
@@ -155,7 +155,7 @@ function CurrentAccount({ account, onSwitch }: CurrentAccountProps) {
                     </div>
                 )}
 
-                {/* Gemini Flash 配额 */}
+                {/* Gemini Flash  */}
                 {geminiFlashModel && (
                     <div className="space-y-1.5">
                         <div className="flex justify-between items-baseline">
@@ -186,13 +186,13 @@ function CurrentAccount({ account, onSwitch }: CurrentAccountProps) {
                     </div>
                 )}
 
-                {/* Claude 配额 */}
+                {/* Claude  */}
                 {claudeModel && (
                     <div className="space-y-1.5">
                         <div className="flex justify-between items-baseline">
                             <span className="text-xs font-medium text-gray-600 dark:text-gray-400 flex items-center gap-1">
                                 {account.protected_models?.includes('claude') && <Lock className="w-2.5 h-2.5 text-rose-500" />}
-                                Claude 系列
+                                Claude 
                             </span>
                             <div className="flex items-center gap-2">
                                 <span className="text-[10px] text-gray-400 dark:text-gray-500" title={`${t('accounts.reset_time')}: ${new Date(claudeModel.reset_time).toLocaleString()}`}>

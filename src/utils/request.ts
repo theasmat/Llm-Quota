@@ -1,7 +1,7 @@
-// 探测环境
+// 
 const isTauri = typeof window !== 'undefined' && (!!(window as any).__TAURI_INTERNALS__ || !!(window as any).__TAURI__);
 
-// 命令到 API 的映射
+//  API 
 const COMMAND_MAPPING: Record<string, { url: string; method: 'GET' | 'POST' | 'DELETE' | 'PATCH' }> = {
   // Accounts
   'list_accounts': { url: '/api/accounts', method: 'GET' },
@@ -165,7 +165,7 @@ const COMMAND_MAPPING: Record<string, { url: string; method: 'GET' | 'POST' | 'D
 };
 
 export async function request<T>(cmd: string, args?: any): Promise<T> {
-  // 1. Tauri 环境：直接使用 invoke ...
+  // 1. Tauri ： invoke ...
   if (isTauri) {
     try {
       const { invoke } = await import('@tauri-apps/api/core');
@@ -176,7 +176,7 @@ export async function request<T>(cmd: string, args?: any): Promise<T> {
     }
   }
 
-  // 2. Web 环境：映射到 HTTP API
+  // 2. Web ： HTTP API
   const mapping = COMMAND_MAPPING[cmd];
   if (!mapping) {
     console.error(`Command [${cmd}] is not yet mapped for Web mode. Failing.`);
@@ -184,16 +184,16 @@ export async function request<T>(cmd: string, args?: any): Promise<T> {
   }
 
   let url = mapping.url;
-  // [FIX] 创建 args 副本，用于移除已使用的路径参数
+  // [FIX]  args ，
   let bodyArgs = args ? { ...args } : undefined;
 
-  // 通用路径参数处理：替换 :key 为 args[key]
+  // ： :key  args[key]
   if (args) {
     Object.keys(args).forEach(key => {
       const placeholder = `:${key}`;
       if (url.includes(placeholder)) {
         url = url.replace(placeholder, encodeURIComponent(String(args[key])));
-        // [FIX] 从 body 参数中移除已用于路径的参数
+        // [FIX]  body 
         if (bodyArgs) {
           delete bodyArgs[key];
         }
@@ -217,7 +217,7 @@ export async function request<T>(cmd: string, args?: any): Promise<T> {
   if ((mapping.method === 'GET' || mapping.method === 'DELETE') && args) {
     const params = new URLSearchParams();
     Object.entries(args).forEach(([key, value]) => {
-      // [FIX] 跳过已用于路径替换的参数
+      // [FIX] 
       if (url.includes(encodeURIComponent(String(value)))) return;
       if (value !== undefined && value !== null) {
         params.append(key, String(value));
@@ -226,7 +226,7 @@ export async function request<T>(cmd: string, args?: any): Promise<T> {
     const qs = params.toString();
     if (qs) url += `?${qs}`;
   } else if ((mapping.method === 'POST' || mapping.method === 'PATCH') && bodyArgs) {
-    // [FIX] 如果有 request 包装，提取其内容作为 body
+    // [FIX]  request ， body
     const body = bodyArgs.request !== undefined ? bodyArgs.request : bodyArgs;
     options.body = JSON.stringify(body);
   }
@@ -235,7 +235,7 @@ export async function request<T>(cmd: string, args?: any): Promise<T> {
     const response = await fetch(url, options);
     if (!response.ok) {
       if (!isTauri && response.status === 401) {
-        // [FIX #1163] 增加防抖锁，避免重复事件导致 UI 抖动
+        // [FIX #1163] ， UI 
         const now = Date.now();
         const lastAuthError = (window as any)._lastAuthErrorTime || 0;
         if (now - lastAuthError > 2000) {
@@ -247,7 +247,7 @@ export async function request<T>(cmd: string, args?: any): Promise<T> {
       throw errorData.error || `HTTP Error ${response.status}`;
     }
 
-    // 如果是 204 No Content，直接返回 null
+    //  204 No Content， null
     if (response.status === 204) {
       return null as unknown as T;
     }

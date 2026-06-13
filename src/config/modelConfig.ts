@@ -1,33 +1,33 @@
 import { Gemini, Claude } from '@lobehub/icons';
 
 /**
- * 模型配置接口
+ * 
  */
 export interface ModelConfig {
-    /** 模型完整显示名称 (作为回退或默认展示) */
+    /**  () */
     label: string;
-    /** 模型简短标签 (用于列表/卡片) */
+    /**  (/) */
     shortLabel: string;
-    /** 保护模型的键名 */
+    /**  */
     protectedKey: string;
-    /** 模型图标组件 */
+    /**  */
     Icon: React.ComponentType<{ size?: number; className?: string }>;
-    /** 国际化键名 (用于动态名称) */
+    /**  () */
     i18nKey: string;
-    /** 描述信息键名 (用于详细说明) */
+    /**  () */
     i18nDescKey: string;
-    /** 所属系列/分组 */
+    /** / */
     group: string;
-    /** 选填标签 (用于筛选) */
+    /**  () */
     tags?: string[];
 }
 
 /**
- * 模型配置映射
- * 键为模型 ID，值为模型配置
+ * 
+ *  ID，
  */
 export const MODEL_CONFIG: Record<string, ModelConfig> = {
-    // Gemini 3.x 系列
+    // Gemini 3.x 
     // [Migrate] Gemini 3 Pro High/Low -> Gemini 3.1 Pro High/Low
     'gemini-3.1-pro-high': {
         label: 'Gemini 3.1 Pro High',
@@ -102,7 +102,7 @@ export const MODEL_CONFIG: Record<string, ModelConfig> = {
         tags: ['pro', 'low'],
     },
 
-    // Gemini 2.5 系列
+    // Gemini 2.5 
     'gemini-2.5-flash': {
         label: 'Gemini 2.5 Flash',
         shortLabel: 'G2.5 Flash',
@@ -144,7 +144,7 @@ export const MODEL_CONFIG: Record<string, ModelConfig> = {
         tags: ['pro'],
     },
 
-    // Claude 系列
+    // Claude 
     'claude-sonnet-4-6': {
         label: 'Claude 4.6',
         shortLabel: 'Claude 4.6',
@@ -178,30 +178,30 @@ export const MODEL_CONFIG: Record<string, ModelConfig> = {
 };
 
 /**
- * 获取所有模型 ID 列表
+ *  ID 
  */
 export const getAllModelIds = (): string[] => Object.keys(MODEL_CONFIG);
 
 /**
- * 根据模型 ID 获取配置
+ *  ID 
  */
 export const getModelConfig = (modelId: string): ModelConfig | undefined => {
     return MODEL_CONFIG[modelId.toLowerCase()];
 };
 
 /**
- * 模型排序权重配置
- * 数字越小，优先级越高
+ * 
+ * ，
  */
 const MODEL_SORT_WEIGHTS = {
-    // 系列权重 (第一优先级)
+    //  ()
     series: {
         'gemini-3': 100,
         'gemini-2.5': 200,
         'gemini-2': 300,
         'claude': 400,
     },
-    // 性能级别权重 (第二优先级)
+    //  ()
     tier: {
         'pro': 10,
         'flash': 20,
@@ -209,7 +209,7 @@ const MODEL_SORT_WEIGHTS = {
         'opus': 5,
         'sonnet': 10,
     },
-    // 特殊后缀权重 (第三优先级)
+    //  ()
     suffix: {
         'thinking': 1,
         'image': 2,
@@ -219,13 +219,13 @@ const MODEL_SORT_WEIGHTS = {
 };
 
 /**
- * 获取模型的排序权重
+ * 
  */
 function getModelSortWeight(modelId: string): number {
     const id = modelId.toLowerCase();
     let weight = 0;
 
-    // 1. 系列权重 (x1000)
+    // 1.  (x1000)
     if (id.startsWith('gemini-3')) {
         weight += MODEL_SORT_WEIGHTS.series['gemini-3'] * 1000;
     } else if (id.startsWith('gemini-2.5')) {
@@ -236,7 +236,7 @@ function getModelSortWeight(modelId: string): number {
         weight += MODEL_SORT_WEIGHTS.series['claude'] * 1000;
     }
 
-    // 2. 性能级别权重 (x100)
+    // 2.  (x100)
     if (id.includes('pro')) {
         weight += MODEL_SORT_WEIGHTS.tier['pro'] * 100;
     } else if (id.includes('flash')) {
@@ -249,7 +249,7 @@ function getModelSortWeight(modelId: string): number {
         weight += MODEL_SORT_WEIGHTS.tier['sonnet'] * 100;
     }
 
-    // 3. 特殊后缀权重 (x10)
+    // 3.  (x10)
     if (id.includes('thinking')) {
         weight += MODEL_SORT_WEIGHTS.suffix['thinking'] * 10;
     } else if (id.includes('image')) {
@@ -264,21 +264,21 @@ function getModelSortWeight(modelId: string): number {
 }
 
 /**
- * 对模型列表进行排序
- * @param models 模型列表
- * @returns 排序后的模型列表
+ * 
+ * @param models 
+ * @returns 
  */
 export function sortModels<T extends { id: string }>(models: T[]): T[] {
     return [...models].sort((a, b) => {
         const weightA = getModelSortWeight(a.id);
         const weightB = getModelSortWeight(b.id);
 
-        // 按权重升序排序
+        // 
         if (weightA !== weightB) {
             return weightA - weightB;
         }
 
-        // 权重相同时，按字母顺序排序
+        // ，
         return a.id.localeCompare(b.id);
     });
 }

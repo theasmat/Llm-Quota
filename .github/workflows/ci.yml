@@ -2,16 +2,16 @@ name: CI
 
 on:
   push:
-    branches: [main, master]
+    tags: ["[0-9].[0-9].[0-9]", "v[0-9].[0-9].[0-9]"]
   pull_request:
-    branches: [main, master]
+    tags: ["[0-9].[0-9].[0-9]", "v[0-9].[0-9].[0-9]"]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  # 前端构建检查
+  # 
   build-frontend:
     name: Build Frontend
     runs-on: ubuntu-latest
@@ -35,7 +35,7 @@ jobs:
       - name: Build frontend
         run: npm run build
 
-  # Rust 代码检查
+  # Rust 
   check-rust:
     name: Check Rust Code
     runs-on: ${{ matrix.platform }}
@@ -78,7 +78,7 @@ jobs:
           cd src-tauri
           cargo check
 
-  # Tauri 构建测试（不打包）
+  # Tauri （）
   build-tauri:
     name: Build Tauri App
     runs-on: ${{ matrix.platform }}
@@ -118,6 +118,6 @@ jobs:
       - name: Build Tauri app (debug)
         run: npm run tauri build -- --debug
         env:
-          # CI 环境不需要签名
+          # CI 
           TAURI_SIGNING_PRIVATE_KEY: ""
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ""

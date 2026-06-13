@@ -19,7 +19,7 @@ async fn create_standard_client(_account_id: Option<&str>) -> reqwest::Client {
 }
 
 /// Get shared HTTP Client (60s timeout) for pure info fetching (No JA3)
-#[allow(dead_code)] // 预留给预热/后台任务调用
+#[allow(dead_code)] // /
 async fn create_long_standard_client(_account_id: Option<&str>) -> reqwest::Client {
     crate::utils::http::get_long_standard_client()
 }
@@ -185,7 +185,7 @@ pub async fn fetch_quota_with_cache(
                             crate::modules::logger::log_error(&format!("API Error [{}]: {}", status, text));
                         }
 
-                        // 403 Forbidden 处理：如果是带有 project_id 的请求，尝试剥离后重试
+                        // 403 Forbidden ： project_id ，
                         if status == reqwest::StatusCode::FORBIDDEN {
                             if current_payload.get("project").is_some() && !retry_without_project {
                                 crate::modules::logger::log_warn(&format!(

@@ -101,7 +101,7 @@ function Accounts() {
   const [localPageSize, setLocalPageSize] = useState<number | null>(() => {
     const saved = localStorage.getItem("accounts_page_size");
     return saved ? parseInt(saved) : null;
-  }); // 本地分页大小状态
+  }); // 
 
   // Save page size preference
   useEffect(() => {
@@ -110,40 +110,40 @@ function Accounts() {
     }
   }, [localPageSize]);
 
-  // 动态计算分页条数
+  // 
   const ITEMS_PER_PAGE = useMemo(() => {
-    // 优先使用本地设置的分页大小
+    // 
     if (localPageSize && localPageSize > 0) {
       return localPageSize;
     }
 
-    // 其次使用用户配置的固定值
+    // 
     if (false) {
       return 10;
     }
 
-    // 回退到原有的动态计算逻辑
+    // 
     if (!containerSize.height) return viewMode === "grid" ? 6 : 8;
 
     if (viewMode === "list") {
-      const headerHeight = 36; // 缩深后的表头高度
-      const rowHeight = 72; // 包含多行模型信息后的实际行高
-      // 计算能容纳多少行, 默认最低 10 行
+      const headerHeight = 36; // 
+      const rowHeight = 72; // 
+      // ,  10 
       const autoFitCount = Math.floor(
         (containerSize.height - headerHeight) / rowHeight,
       );
       return Math.max(10, autoFitCount);
     } else {
-      const cardHeight = 180; // AccountCard 实际高度 (含间距)
+      const cardHeight = 180; // AccountCard  ()
       const gap = 16; // gap-4
 
-      // 匹配 Tailwind 断点逻辑
+      //  Tailwind 
       let cols = 1;
       if (containerSize.width >= 1200)
-        cols = 4; // xl (约为 1280 左右)
+        cols = 4; // xl ( 1280 )
       else if (containerSize.width >= 900)
-        cols = 3; // lg (约为 1024 左右)
-      else if (containerSize.width >= 600) cols = 2; // md (约为 768 左右)
+        cols = 3; // lg ( 1024 )
+      else if (containerSize.width >= 600) cols = 2; // md ( 768 )
 
       const rows = Math.max(
         1,
@@ -162,14 +162,14 @@ function Accounts() {
     setCurrentPage(1);
   }, [viewMode]);
 
-  // 搜索过滤逻辑
+  // 
   const searchedAccounts = useMemo(() => {
     if (!searchQuery) return accounts;
     const lowQuery = searchQuery.toLowerCase();
     return accounts.filter((a) => a.email.toLowerCase().includes(lowQuery));
   }, [accounts, searchQuery]);
 
-  // 计算各筛选状态下的数量 (基于搜索结果)
+  //  ()
   const filterCounts = useMemo(() => {
     return {
       all: searchedAccounts.length,
@@ -186,7 +186,7 @@ function Accounts() {
     };
   }, [searchedAccounts]);
 
-  // 过滤和搜索最终结果
+  // 
   const filteredAccounts = useMemo(() => {
     let result = searchedAccounts;
 
@@ -218,7 +218,7 @@ function Accounts() {
     setCurrentPage(page);
   };
 
-  // 清空选择当过滤改变 并重置分页
+  //  
   useEffect(() => {
     setSelectedIds(new Set());
     setCurrentPage(1);
@@ -235,7 +235,7 @@ function Accounts() {
   };
 
   const handleToggleAll = () => {
-    // 全选当前页的所有项
+    // 
     const currentIds = paginatedAccounts.map((a) => a.id);
     const allSelected = currentIds.every((id) => selectedIds.has(id));
 
@@ -337,7 +337,7 @@ function Accounts() {
       const details: string[] = [];
 
       if (isBatch) {
-        // 批量刷新选中
+        // 
         const ids = Array.from(selectedIds);
         setRefreshingIds(new Set(ids));
 
@@ -356,7 +356,7 @@ function Accounts() {
           }
         });
       } else {
-        // 刷新所有
+        // 
         setRefreshingIds(new Set(accounts.map((a) => a.id)));
         const stats = await useAccountStore.getState().refreshAllQuotas();
         if (stats) {
@@ -432,7 +432,7 @@ function Accounts() {
         await invoke("save_text_file", { path, content });
         showToast(`${t("common.success")} ${path}`, "success");
       } else {
-        // Web 模式：使用浏览器下载
+        // Web ：
         const blob = new Blob([content], { type: "application/json" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
@@ -555,7 +555,7 @@ function Accounts() {
         showToast(t("accounts.import_fail", { error: String(error) }), "error");
       }
     } else {
-      // Web 模式: 触发隐藏的 file input
+      // Web :  file input
       fileInputRef.current?.click();
     }
   };
@@ -573,7 +573,7 @@ function Accounts() {
       console.error("Import failed:", error);
       showToast(t("accounts.import_fail", { error: String(error) }), "error");
     } finally {
-      // 重置 input,允许重复选择同一文件
+      //  input,
       event.target.value = "";
     }
   };
@@ -588,7 +588,7 @@ function Accounts() {
 
   return (
     <div className="h-full flex flex-col p-3 gap-2 max-w-7xl mx-auto w-full">
-      {/* 测试按钮 - 在最顶部 */}
+      {/*  -  */}
       <input
         ref={fileInputRef}
         type="file"
@@ -597,9 +597,9 @@ function Accounts() {
         onChange={handleFileChange}
       />
 
-      {/* 顶部工具栏:搜索、过滤和操作按钮 */}
+      {/* :、 */}
       <div className="flex-none flex items-center gap-2">
-        {/* 搜索框 - 响应式:大屏显示输入框,小屏显示图标 */}
+        {/*  - :, */}
         <div className="hidden lg:block flex-none w-40 relative transition-all focus-within:w-48">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
@@ -611,7 +611,7 @@ function Accounts() {
           />
         </div>
 
-        {/* 搜索按钮 - 小屏显示 */}
+        {/*  -  */}
         <div className="lg:hidden relative">
           {!isSearchExpanded ? (
             <button
@@ -642,7 +642,7 @@ function Accounts() {
           )}
         </div>
 
-        {/* 视图切换按钮组 */}
+        {/*  */}
         <div className="flex gap-1 bg-gray-100 dark:bg-base-200 p-0.5 rounded-lg shrink-0">
           <button
             className={cn(
@@ -670,9 +670,9 @@ function Accounts() {
           </button>
         </div>
 
-        {/* 过滤按钮组 - 图标化响应式 */}
+        {/*  -  */}
         <div className="flex gap-0.5 bg-gray-100/80 dark:bg-base-200 p-0.5 rounded-lg border border-gray-200/50 dark:border-white/5 shrink-0">
-          {/* 全部 */}
+          {/*  */}
           <button
             className={cn(
               "px-2 py-1 rounded-md text-[10px] font-semibold transition-all flex items-center gap-1 whitespace-nowrap shrink-0",
@@ -763,7 +763,7 @@ function Accounts() {
 
         <div className="flex-1 min-w-[8px]"></div>
 
-        {/* 操作按钮组 */}
+        {/*  */}
         <div className="flex items-center gap-1.5 shrink-0">
           <AddAccountDialog onAdd={handleAddAccount} showText={false} />
 
@@ -848,7 +848,7 @@ function Accounts() {
         </div>
       </div>
 
-      {/* 账号列表内容区域 */}
+      {/*  */}
       <div className="flex-1 min-h-0 relative" ref={containerRef}>
         {viewMode === "list" ? (
           <div className="h-full bg-white dark:bg-base-100 rounded-2xl shadow-sm border border-gray-100 dark:border-base-200 flex flex-col overflow-hidden">
@@ -893,7 +893,7 @@ function Accounts() {
         )}
       </div>
 
-      {/* 极简分页 - 无边框浮动样式 */}
+      {/*  -  */}
       {filteredAccounts.length > 0 && (
         <div className="flex-none">
           <Pagination
@@ -904,7 +904,7 @@ function Accounts() {
             itemsPerPage={ITEMS_PER_PAGE}
             onPageSizeChange={(newSize) => {
               setLocalPageSize(newSize);
-              setCurrentPage(1); // 重置到第一页
+              setCurrentPage(1); // 
             }}
             pageSizeOptions={[10, 20, 50, 100]}
           />
@@ -959,13 +959,13 @@ function Accounts() {
         onCancel={() => setIsRefreshConfirmOpen(false)}
       />
 
-      {/* 账号详情弹窗 */}
+      {/*  */}
       <AccountDetailsDialog
         account={detailsAccount}
         onClose={() => setDetailsAccount(null)}
       />
 
-      {/* 账号错误详情弹窗 */}
+      {/*  */}
       <AccountErrorDialog
         account={accounts.find(a => a.id === errorAccountId) || null}
         onClose={() => setErrorAccountId(null)}

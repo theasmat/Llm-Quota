@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 
 function BestAccounts({ accounts, currentAccountId, onSwitch }: BestAccountsProps) {
     const { t } = useTranslation();
-    // 1. 获取按配额排序的列表 (排除当前账号)
+    // 1.  ()
     const geminiSorted = accounts
         .filter(a => a.id !== currentAccountId)
         .map(a => {
@@ -24,7 +24,7 @@ function BestAccounts({ accounts, currentAccountId, onSwitch }: BestAccountsProp
                 )
                 .reduce((best, model) => Math.max(best, model.percentage || 0), 0);
             const flashQuota = a.quota?.models.find(m => m.name.toLowerCase() === 'gemini-3-flash')?.percentage || 0;
-            // 综合评分：Pro 权重更高 (70%)，Flash 权重 30%
+            // ：Pro  (70%)，Flash  30%
             return {
                 ...a,
                 quotaVal: Math.round(proQuota * 0.7 + flashQuota * 0.3),
@@ -45,29 +45,29 @@ function BestAccounts({ accounts, currentAccountId, onSwitch }: BestAccountsProp
     let bestGemini = geminiSorted[0];
     let bestClaude = claudeSorted[0];
 
-    // 2. 如果推荐是同一个账号，且有其他选择，尝试寻找最优的"不同账号"组合
+    // 2. ，，""
     if (bestGemini && bestClaude && bestGemini.id === bestClaude.id) {
         const nextGemini = geminiSorted[1];
         const nextClaude = claudeSorted[1];
 
-        // 方案A: 保持 Gemini 最优，换 Claude 次优
-        // 方案B: 换 Gemini 次优，保持 Claude 最优
-        // 比较标准：两者配额之和最大化 (或者优先保住 100% 的那个)
+        // A:  Gemini ， Claude 
+        // B:  Gemini ， Claude 
+        // ： ( 100% )
 
         const scoreA = bestGemini.quotaVal + (nextClaude?.quotaVal || 0);
         const scoreB = (nextGemini?.quotaVal || 0) + bestClaude.quotaVal;
 
         if (nextClaude && (!nextGemini || scoreA >= scoreB)) {
-            // 选方案A：换 Claude
+            // A： Claude
             bestClaude = nextClaude;
         } else if (nextGemini) {
-            // 选方案B：换 Gemini
+            // B： Gemini
             bestGemini = nextGemini;
         }
-        // 如果都没有次优解（例如只有一个账号），则保持原样
+        // （），
     }
 
-    // 构造最终用于显示的视图模型 (兼容原有渲染逻辑)
+    //  ()
     const bestGeminiRender = bestGemini ? { ...bestGemini, geminiQuota: bestGemini.quotaVal } : undefined;
     const bestClaudeRender = bestClaude ? { ...bestClaude, claudeQuota: bestClaude.quotaVal } : undefined;
 
@@ -79,7 +79,7 @@ function BestAccounts({ accounts, currentAccountId, onSwitch }: BestAccountsProp
             </h2>
 
             <div className="space-y-2 flex-1">
-                {/* Gemini 最佳 */}
+                {/* Gemini  */}
                 {bestGeminiRender && (
                     <div className="flex items-center justify-between p-2.5 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-100 dark:border-green-900/30">
                         <div className="flex-1 min-w-0">
@@ -94,7 +94,7 @@ function BestAccounts({ accounts, currentAccountId, onSwitch }: BestAccountsProp
                     </div>
                 )}
 
-                {/* Claude 最佳 */}
+                {/* Claude  */}
                 {bestClaudeRender && (
                     <div className="flex items-center justify-between p-2.5 bg-cyan-50 dark:bg-cyan-900/20 rounded-lg border border-cyan-100 dark:border-cyan-900/30">
                         <div className="flex-1 min-w-0">
@@ -121,7 +121,7 @@ function BestAccounts({ accounts, currentAccountId, onSwitch }: BestAccountsProp
                     <button
                         className="w-full px-3 py-1.5 bg-blue-500 text-white text-xs font-medium rounded-lg hover:bg-blue-600 transition-colors"
                         onClick={() => {
-                            // 优先切换到配额更高的账号
+                            // 
                             let targetId = bestGeminiRender?.id;
                             if (bestClaudeRender && (!bestGeminiRender || bestClaudeRender.claudeQuota > bestGeminiRender.geminiQuota)) {
                                 targetId = bestClaudeRender.id;

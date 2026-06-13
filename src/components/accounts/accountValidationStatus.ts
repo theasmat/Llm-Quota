@@ -8,8 +8,8 @@ const RATE_LIMIT_HINTS = [
     'rate-limited',
     'risk control',
     'risk-controlled',
-    '风控',
-    '冻结',
+    '',
+    '',
     'frozen',
 ];
 

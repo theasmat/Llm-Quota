@@ -1,6 +1,6 @@
 import type { LucideIcon } from 'lucide-react';
 
-// 类型定义
+// 
 export interface NavItem {
     path: string;
     label: string;
@@ -14,12 +14,12 @@ export interface Language {
     short: string;
 }
 
-// 语言配置
+// 
 export const LANGUAGES: Language[] = [
-    { code: 'zh', label: '简体中文', short: 'ZH' },
-    { code: 'zh-TW', label: '繁體中文', short: 'TW' },
+    { code: 'zh', label: '', short: 'ZH' },
+    { code: 'zh-TW', label: '', short: 'TW' },
     { code: 'en', label: 'English', short: 'EN' },
-    { code: 'ja', label: '日本語', short: 'JA' },
+    { code: 'ja', label: '', short: 'JA' },
     { code: 'tr', label: 'Türkçe', short: 'TR' },
     { code: 'vi', label: 'Tiếng Việt', short: 'VI' },
     { code: 'pt', label: 'Português', short: 'PT' },
@@ -30,7 +30,7 @@ export const LANGUAGES: Language[] = [
     { code: 'my', label: 'Bahasa Melayu', short: 'MY' },
 ];
 
-// 工具函数
+// 
 export const isActive = (pathname: string, itemPath: string): boolean => {
     if (itemPath === '/') {
         return pathname === '/';

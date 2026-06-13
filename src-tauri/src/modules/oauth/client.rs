@@ -102,7 +102,7 @@ async fn exchange_code_once(
     redirect_uri: &str,
     client_cfg: &OAuthClientConfig,
 ) -> Result<TokenResponse, (Option<reqwest::StatusCode>, String)> {
-    // [PHASE 2] 对于登录行为，尚未有 account_id，使用全局池阶梯逻辑
+    // [PHASE 2] ， account_id，
     let client = crate::utils::http::get_long_standard_client();
 
     let params = [
@@ -129,7 +129,7 @@ async fn exchange_code_once(
                 (
                     None,
                     format!(
-                        "Token exchange request failed: {}. 请检查你的网络代理设置，确保可以稳定连接 Google 服务。",
+                        "Token exchange request failed: {}. ， Google 。",
                         e
                     ),
                 )
@@ -242,7 +242,7 @@ async fn refresh_access_token_once(
     account_id: Option<&str>,
     client_cfg: &OAuthClientConfig,
 ) -> Result<TokenResponse, (Option<reqwest::StatusCode>, String)> {
-    // [PHASE 2] 根据 account_id 使用对应的代理
+    // [PHASE 2]  account_id 
     let client = crate::utils::http::get_long_standard_client();
 
     let params = [
@@ -252,7 +252,7 @@ async fn refresh_access_token_once(
         ("grant_type", "refresh_token"),
     ];
 
-    // [FIX #1583] 提供更详细的日志，帮助诊断 Docker 环境下的代理问题
+    // [FIX #1583] ， Docker 
     if let Some(id) = account_id {
         crate::modules::logger::log_info(&format!("Refreshing Token for account: {}...", id));
     } else {
@@ -278,7 +278,7 @@ async fn refresh_access_token_once(
                 (
                     None,
                     format!(
-                        "Refresh request failed: {}. 无法连接 Google 授权服务器，请检查代理设置。",
+                        "Refresh request failed: {}.  Google ，。",
                         e
                     ),
                 )
