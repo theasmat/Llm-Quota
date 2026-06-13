@@ -120,7 +120,7 @@ get_version() {
     # Method 1: Try GitHub API
     local response
     if response=$(curl -fsSL -H "User-Agent: Antigravity-Installer" "${GITHUB_API}/latest" 2>/dev/null); then
-        RELEASE_VERSION=$(echo "$response" | grep '"tag_name"' | sed -E 's/.*"v?([^"]+)".*/\1/')
+        RELEASE_VERSION=$(echo "$response" | awk -F'"tag_name": *"' '{print $2}' | awk -F'"' '{print $1}' | sed 's/^v//')
         if [[ -n "$RELEASE_VERSION" ]]; then
             info "Latest version: v$RELEASE_VERSION"
             return
