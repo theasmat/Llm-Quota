@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Antigravity Tools Install Script (Linux + macOS)
-# Usage: curl -fsSL https://raw.githubusercontent.com/lbjlaq/Antigravity-Manager/main/install.sh | bash
+# Usage: curl -fsSL https://raw.githubusercontent.com/theasmat/llm-quota/master/install.sh | bash
 #
 # Environment variables:
 #   VERSION     - Install specific version (e.g., "4.1.20"), default: latest
@@ -40,10 +40,10 @@ show_help() {
 ${APP_NAME} Install Script
 
 Usage:
-    curl -fsSL https://raw.githubusercontent.com/${REPO}/main/install.sh | bash
+    curl -fsSL https://raw.githubusercontent.com/${REPO}/master/install.sh | bash
 
     # Install specific version
-    curl -fsSL https://raw.githubusercontent.com/${REPO}/main/install.sh | VERSION=4.2.2 bash
+    curl -fsSL https://raw.githubusercontent.com/${REPO}/master/install.sh | VERSION=4.2.2 bash
 
 Options:
     --help      Show this help message

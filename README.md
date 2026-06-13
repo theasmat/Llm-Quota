@@ -88,7 +88,7 @@ brew install --no-quarantine theasmat/llm-quota/llm-quota
 ### macOS & Linux (Install Script)
 You can use the automated install script:
 ```bash
-curl -fsSL https://raw.githubusercontent.com/theasmat/llm-quota/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/theasmat/llm-quota/master/install.sh | bash
 ```
 
 ### Windows
