@@ -79,20 +79,25 @@ Llm Quota is a compact, high-density dashboard built with Tauri and React to man
 
 ## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Laptop.png" alt="Laptop" width="30" height="30" /> Installation
 
-### macOS (Homebrew)
+<!-- DOWNLOAD_TABLE_START -->
+<!-- The download table will be automatically injected here by GitHub Actions -->
+| Architecture / OS | 🍎 macOS | 🪟 Windows | 🐧 Linux |
+|:---:|:---:|:---:|:---:|
+| **x86_64 (Intel/AMD)** | [⬇️ Download .dmg](https://github.com/theasmat/llm-quota/releases/download/0.1.0/Llm%20Quota_4.2.2_x64.dmg) | [⬇️ Download .exe](https://github.com/theasmat/llm-quota/releases/download/0.1.0/Llm%20Quota_4.2.2_x64-setup.exe) | [⬇️ Download .AppImage](https://github.com/theasmat/llm-quota/releases/download/0.1.0/llm-quota_4.2.2_amd64.AppImage) |
+| **arm64 (Apple Silicon/ARM)** | [⬇️ Download .dmg](https://github.com/theasmat/llm-quota/releases/download/0.1.0/Llm%20Quota_4.2.2_aarch64.dmg) | [⬇️ Download .exe](https://github.com/theasmat/llm-quota/releases/download/0.1.0/Llm%20Quota_4.2.2_arm64-setup.exe) | [⬇️ Download .AppImage](https://github.com/theasmat/llm-quota/releases/download/0.1.0/llm-quota_4.2.2_aarch64.AppImage) |
+| **Universal (All)** | [⬇️ Download .dmg](https://github.com/theasmat/llm-quota/releases/download/0.1.0/Llm%20Quota_4.2.2_universal.dmg) | - | - |
+<!-- DOWNLOAD_TABLE_END -->
+
+### Alternative: macOS (Homebrew)
 The easiest way to install on macOS is using our Homebrew tap:
 ```bash
 brew install --no-quarantine theasmat/llm-quota/llm-quota
 ```
 
-### macOS & Linux (Install Script)
-You can use the automated install script:
+### Alternative: Automated Install Script (macOS & Linux)
 ```bash
 curl -fsSL https://raw.githubusercontent.com/theasmat/llm-quota/master/install.sh | bash
 ```
-
-### Windows
-Download the `.exe` installer from the [Releases](https://github.com/theasmat/llm-quota/releases/latest) page.
 
 ---
 

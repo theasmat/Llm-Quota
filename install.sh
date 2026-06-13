@@ -120,7 +120,7 @@ get_version() {
     # Method 1: Try GitHub API
     local response
     if response=$(curl -fsSL -H "User-Agent: Antigravity-Installer" "${GITHUB_API}/latest" 2>/dev/null); then
-        RELEASE_VERSION=$(echo "$response" | grep '"tag_name"' | sed -E 's/.*"v([^"]+)".*/\1/')
+        RELEASE_VERSION=$(echo "$response" | grep '"tag_name"' | sed -E 's/.*"v?([^"]+)".*/\1/')
         if [[ -n "$RELEASE_VERSION" ]]; then
             info "Latest version: v$RELEASE_VERSION"
             return
@@ -132,8 +132,8 @@ get_version() {
     local redirect_url
     redirect_url=$(curl -fsSI "https://github.com/${REPO}/releases/latest" 2>/dev/null | grep -i "^location:" | tr -d '\r' | awk '{print $2}')
 
-    if [[ -n "$redirect_url" ]]; then
-        RELEASE_VERSION=$(echo "$redirect_url" | sed -E 's|.*/tag/v||')
+    if [[ -n "$redirect_url" && "$redirect_url" == *"/tag/"* ]]; then
+        RELEASE_VERSION=$(echo "$redirect_url" | sed -E 's|.*/tag/v?||')
     fi
 
     if [[ -z "${RELEASE_VERSION:-}" ]]; then
