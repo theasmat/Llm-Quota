@@ -39,7 +39,7 @@ Llm Quota is a compact, high-density dashboard built with Tauri and React to man
 - [🚀 Downloads](#-downloads)
 - [✨ Features](#-features)
 - [🛠️ Tech Stack](#️-tech-stack)
-- [💻 Installation](#-installation)
+- [<img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Laptop.png" alt="Laptop" width="20" height="20" /> Installation](#installation)
 - [📷 Screenshots](#-screenshots)
 - [🤝 Contributing](#-contributing)
 - [📄 License](#-license)
@@ -77,7 +77,7 @@ Llm Quota is a compact, high-density dashboard built with Tauri and React to man
 - **State Management**: Zustand
 - **Icons**: Lucide
 
-## 💻 Installation
+## <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Laptop.png" alt="Laptop" width="30" height="30" /> Installation
 
 ### macOS (Homebrew)
 The easiest way to install on macOS is using our Homebrew tap:
