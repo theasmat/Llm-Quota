@@ -50,9 +50,9 @@ Llm Quota is a compact, high-density dashboard built with Tauri and React to man
 
 | OS | Download Link | Notes |
 |----|--------------|-------|
-| <img src="https://cdn.simpleicons.org/apple/black" width="16" /> **macOS** | [Download .dmg](https://github.com/theasmat/llm-quota/releases/latest) | Or use Homebrew: `brew install --no-quarantine theasmat/llm-quota/llm-quota` |
-| <img src="https://cdn.simpleicons.org/windows/0078D6" width="16" /> **Windows** | [Download .exe](https://github.com/theasmat/llm-quota/releases/latest) | Standalone Windows installer |
-| <img src="https://cdn.simpleicons.org/linux/black" width="16" /> **Linux** | [Download .AppImage / .deb](https://github.com/theasmat/llm-quota/releases/latest) | Universal AppImage or native packages |
+| <img src="https://skillicons.dev/icons?i=apple" width="16" /> **macOS** | [Download .dmg](https://github.com/theasmat/llm-quota/releases/latest) | Or use Homebrew: `brew install --no-quarantine theasmat/llm-quota/llm-quota` |
+| <img src="https://skillicons.dev/icons?i=windows" width="16" /> **Windows** | [Download .exe](https://github.com/theasmat/llm-quota/releases/latest) | Standalone Windows installer |
+| <img src="https://skillicons.dev/icons?i=linux" width="16" /> **Linux** | [Download .AppImage / .deb](https://github.com/theasmat/llm-quota/releases/latest) | Universal AppImage or native packages |
 
 <br/>
 
@@ -66,7 +66,13 @@ Llm Quota is a compact, high-density dashboard built with Tauri and React to man
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: React, TypeScript, Tailwind CSS, Lucide React
+<p align="center">
+  <a href="https://skillicons.dev">
+    <img src="https://skillicons.dev/icons?i=react,ts,tailwind,rust,githubactions&theme=light" />
+  </a>
+</p>
+
+- **Frontend**: React, TypeScript, Tailwind CSS
 - **Backend**: Tauri, Rust
 - **State Management**: Zustand
 - **Icons**: Lucide
@@ -131,9 +137,13 @@ The compiled binaries will be available in the `src-tauri/target/release` direct
 
 ## 📷 Screenshots
 
-> **Note**: Add your screenshots here to show off the beautiful UI!
+> **Note**: These screenshots demonstrate the ultra-compact UI in dark and light themes.
 > 
-> *<img src="https://via.placeholder.com/800x450.png?text=Add+Dashboard+Screenshot+Here" alt="Dashboard" />*
+> <p align="center">
+  <img src="assets/screenshots/gemini.png" width="45%" alt="Dashboard Dark Theme" />
+  &nbsp;&nbsp;&nbsp;
+  <img src="assets/screenshots/home.png" width="45%" alt="Dashboard Light Theme" />
+</p>
 
 <br/>
 
