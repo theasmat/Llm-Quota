@@ -171,9 +171,27 @@ build_download_url() {
             esac
             ;;
         macos)
-            # Prefer universal DMG, fallback to arch-specific
-            DOWNLOAD_URL="${base_url}/Llm.Quota_${RELEASE_VERSION}_universal.dmg"
-            FILENAME="Llm.Quota_${RELEASE_VERSION}_universal.dmg"
+            local macos_arch="aarch64"
+            local default_key="a"
+            if [[ "$ARCH_LABEL" == "x86_64" ]]; then
+                macos_arch="x64"
+                default_key="i"
+            fi
+
+            if [ -c /dev/tty ]; then
+                echo -e -n "${YELLOW}[PROMPT]${NC} Detected macOS ($macos_arch). Download [a]pple silicon (aarch64) or [i]ntel (x64)? [$default_key]: "
+                if read -r user_arch < /dev/tty; then
+                    user_arch=$(echo "$user_arch" | tr '[:upper:]' '[:lower:]')
+                    if [[ "$user_arch" == "a" || "$user_arch" == "apple" || "$user_arch" == "aarch64" ]]; then
+                        macos_arch="aarch64"
+                    elif [[ "$user_arch" == "i" || "$user_arch" == "intel" || "$user_arch" == "x64" || "$user_arch" == "x86_64" ]]; then
+                        macos_arch="x64"
+                    fi
+                fi
+            fi
+
+            DOWNLOAD_URL="${base_url}/Llm.Quota_${RELEASE_VERSION}_${macos_arch}.dmg"
+            FILENAME="Llm.Quota_${RELEASE_VERSION}_${macos_arch}.dmg"
             ;;
     esac
 
