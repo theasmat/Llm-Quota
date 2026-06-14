@@ -75,12 +75,12 @@ Select the appropriate package for the target operating system.
 
 | 🍎 macOS                                                                      | 🪟 Windows                                                       | 🐧 Linux                                                                  |
 | ----------------------------------------------------------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| [⬇️ Universal (.dmg)](#) _(TBD)_        | [⬇️ x64 (.exe)](#) _(TBD)_ | [⬇️ amd64 (.AppImage)](#) _(TBD)_   |
-| [⬇️ Apple Silicon (.dmg)](#) _(TBD)_    | [⬇️ x64 (.msi)](#) _(TBD)_ | [⬇️ aarch64 (.AppImage)](#) _(TBD)_ |
-| [⬇️ Intel x64 (.dmg)](#) _(TBD)_        |                                                                  | [⬇️ amd64 (.deb)](#) _(TBD)_        |
-| [⬇️ Universal (.tar.gz)](#) _(TBD)_     |                                                                  | [⬇️ arm64 (.deb)](#) _(TBD)_        |
-| [⬇️ Apple Silicon (.tar.gz)](#) _(TBD)_ |                                                                  | [⬇️ x86_64 (.rpm)](#) _(TBD)_       |
-| [⬇️ Intel x64 (.tar.gz)](#) _(TBD)_     |                                                                  | [⬇️ aarch64 (.rpm)](#) _(TBD)_      |
+| [⬇️ Universal (.dmg)](https://github.com/theasmat/llm-quota/releases/download/v0.1.1/Llm.Quota_0.1.1_universal.dmg) _(15.30 MB)_        | [⬇️ x64 (.exe)](https://github.com/theasmat/llm-quota/releases/download/v0.1.1/Llm.Quota_0.1.1_x64-setup.exe) _(4.65 MB)_ | [⬇️ amd64 (.AppImage)](https://github.com/theasmat/llm-quota/releases/download/v0.1.1/Llm.Quota_0.1.1_amd64.AppImage) _(81.62 MB)_   |
+| [⬇️ Apple Silicon (.dmg)](https://github.com/theasmat/llm-quota/releases/download/v0.1.1/Llm.Quota_0.1.1_aarch64.dmg) _(9.66 MB)_    | [⬇️ x64 (.msi)](https://github.com/theasmat/llm-quota/releases/download/v0.1.1/Llm.Quota_0.1.1_x64_en-US.msi) _(6.41 MB)_ | [⬇️ aarch64 (.AppImage)](https://github.com/theasmat/llm-quota/releases/download/v0.1.1/Llm.Quota_0.1.1_aarch64.AppImage) _(76.94 MB)_ |
+| [⬇️ Intel x64 (.dmg)](https://github.com/theasmat/llm-quota/releases/download/v0.1.1/Llm.Quota_0.1.1_x64.dmg) _(9.85 MB)_        |                                                                  | [⬇️ amd64 (.deb)](https://github.com/theasmat/llm-quota/releases/download/v0.1.1/Llm.Quota_0.1.1_amd64.deb) _(7.94 MB)_        |
+| [⬇️ Universal (.tar.gz)](https://github.com/theasmat/llm-quota/releases/download/v0.1.1/Llm.Quota_universal.app.tar.gz) _(13.47 MB)_     |                                                                  | [⬇️ arm64 (.deb)](https://github.com/theasmat/llm-quota/releases/download/v0.1.1/Llm.Quota_0.1.1_arm64.deb) _(7.85 MB)_        |
+| [⬇️ Apple Silicon (.tar.gz)](https://github.com/theasmat/llm-quota/releases/download/v0.1.1/Llm.Quota_aarch64.app.tar.gz) _(7.71 MB)_ |                                                                  | [⬇️ x86_64 (.rpm)](https://github.com/theasmat/llm-quota/releases/download/v0.1.1/Llm.Quota-0.1.1-1.x86_64.rpm) _(7.94 MB)_       |
+| [⬇️ Intel x64 (.tar.gz)](https://github.com/theasmat/llm-quota/releases/download/v0.1.1/Llm.Quota_x64.app.tar.gz) _(7.85 MB)_     |                                                                  | [⬇️ aarch64 (.rpm)](https://github.com/theasmat/llm-quota/releases/download/v0.1.1/Llm.Quota-0.1.1-1.aarch64.rpm) _(7.85 MB)_      |
 
 ---
 
