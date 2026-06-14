@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Antigravity Tools Install Script (Linux + macOS)
+# Llm Quota Install Script (Linux + macOS)
 # Usage: curl -fsSL https://raw.githubusercontent.com/theasmat/llm-quota/master/install.sh | bash
 #
 # Environment variables:
@@ -17,7 +17,7 @@ NC='\033[0m' # No Color
 
 REPO="theasmat/llm-quota"
 APP_NAME="Llm Quota"
-APP_ID="com.lbjlaq.antigravity-tools"
+APP_ID="com.theasmat.llm-quota"
 GITHUB_API="https://api.github.com/repos/${REPO}/releases"
 
 # Helper functions
@@ -136,8 +136,10 @@ get_version() {
         RELEASE_VERSION=$(echo "$redirect_url" | sed -E 's|.*/tag/v?||')
     fi
 
+    # Method 3: Hardcoded fallback updated by CI
     if [[ -z "${RELEASE_VERSION:-}" ]]; then
-        error "Failed to fetch latest version. Try specifying VERSION=x.x.x"
+        RELEASE_VERSION="0.1.1" # CI_UPDATED_VERSION
+        warn "Failed to fetch latest version from network. Falling back to hardcoded v$RELEASE_VERSION"
     fi
 
     if [ -c /dev/tty ]; then
@@ -242,10 +244,10 @@ install_linux() {
             local install_dir="${HOME}/.local/bin"
             run mkdir -p "$install_dir"
             run chmod +x "$DOWNLOAD_PATH"
-            run cp "$DOWNLOAD_PATH" "${install_dir}/antigravity-tools"
+            run cp "$DOWNLOAD_PATH" "${install_dir}/llm-quota"
 
             if [[ ":$PATH:" != *":${install_dir}:"* ]]; then
-                warn "Add ${install_dir} to your PATH to run antigravity-tools from anywhere"
+                warn "Add ${install_dir} to your PATH to run llm-quota from anywhere"
 
                 local shell_name rc_file export_line
                 shell_name="$(basename "${SHELL:-/bin/bash}")"
