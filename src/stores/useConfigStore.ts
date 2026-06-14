@@ -42,6 +42,8 @@ export const useConfigStore = create<ConfigState>((set, get) => ({
                 const { invoke } = await import('@tauri-apps/api/core');
                 await invoke('set_window_theme', { theme: config.theme }).catch(() => {
                 });
+                await invoke('set_tray_mode', { enabled: config.tray_mode ?? false }).catch(() => {
+                });
             }
         } catch (error) {
             set({ error: String(error), loading: false });

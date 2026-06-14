@@ -19,6 +19,8 @@ pub struct AppConfig {
     pub oauth_client_id: Option<String>,
     #[serde(default)]
     pub oauth_client_secret: Option<String>,
+    #[serde(default)]
+    pub tray_mode: bool,
 }
 
 fn default_true() -> bool {
@@ -33,6 +35,7 @@ impl Default for AppConfig {
             auto_check_updates: true,
             oauth_client_id: None,
             oauth_client_secret: None,
+            tray_mode: false,
         }
     }
 }

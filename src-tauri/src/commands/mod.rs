@@ -43,5 +43,6 @@ pub fn get_handlers() -> impl Fn(tauri::ipc::Invoke) -> bool {
         import_v1_accounts,
         import_custom_db,
         check_local_integrations,
+        set_tray_mode,
     ]
 }

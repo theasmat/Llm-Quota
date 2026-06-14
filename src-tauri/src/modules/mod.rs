@@ -5,3 +5,4 @@ pub mod logger;
 pub mod oauth;
 pub mod quota;
 pub mod integration;
+pub mod tray;

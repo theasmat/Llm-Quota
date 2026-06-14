@@ -45,3 +45,9 @@ pub async fn set_window_theme(app: tauri::AppHandle, theme: String) -> Result<()
     }
     Ok(())
 }
+
+#[tauri::command]
+pub async fn set_tray_mode(app: tauri::AppHandle, enabled: bool) -> Result<(), String> {
+    crate::modules::tray::set_tray_mode(&app, enabled);
+    Ok(())
+}
