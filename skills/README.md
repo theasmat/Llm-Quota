@@ -7,12 +7,12 @@ Each file is structured so an AI coding assistant can read it and immediately st
 
 | File | What It Covers | Who Should Read It |
 |---|---|---|
-| [01-project-overview.md](./01-project-overview.md) | Full architecture, directory map, data flow | Everyone — read first |
-| [02-add-new-api-provider.md](./02-add-new-api-provider.md) | Adding a new AI quota source (OpenAI, Mistral, etc.) | Backend contributors |
-| [03-add-frontend-component.md](./03-add-frontend-component.md) | React components, Zustand stores, i18n | Frontend contributors |
-| [04-add-tauri-command.md](./04-add-tauri-command.md) | Exposing Rust functions to the frontend via `invoke()` | Full-stack contributors |
-| [05-release-and-ci.md](./05-release-and-ci.md) | GitHub Actions, multi-platform builds, how to cut a release | DevOps / release managers |
-| [06-install-scripts.md](./06-install-scripts.md) | mac.sh / linux.sh, dry run testing, adding new platforms | Packaging contributors |
+| [project-overview](./project-overview/SKILL.md) | Full architecture, directory map, data flow | Everyone — read first |
+| [add-new-api-provider](./add-new-api-provider/SKILL.md) | Adding a new AI quota source (OpenAI, Mistral, etc.) | Backend contributors |
+| [add-frontend-component](./add-frontend-component/SKILL.md) | React components, Zustand stores, i18n | Frontend contributors |
+| [add-tauri-command](./add-tauri-command/SKILL.md) | Exposing Rust functions to the frontend via `invoke()` | Full-stack contributors |
+| [release-and-ci](./release-and-ci/SKILL.md) | GitHub Actions, multi-platform builds, how to cut a release | DevOps / release managers |
+| [install-scripts](./install-scripts/SKILL.md) | mac.sh / linux.sh, dry run testing, adding new platforms | Packaging contributors |
 
 ## How to Use These with an AI Assistant
 
