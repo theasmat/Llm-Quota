@@ -21,10 +21,11 @@ APP_ID="com.theasmat.llm-quota"
 GITHUB_API="https://api.github.com/repos/${REPO}/releases"
 
 # Helper functions
-info() { echo -e "${BLUE}[INFO]${NC} $1"; }
-success() { echo -e "${GREEN}[OK]${NC} $1"; }
-warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
-error() { echo -e "${RED}[ERROR]${NC} $1" >&2; exit 1; }
+info() { echo -e "${BLUE}ℹ️  [INFO]${NC} $1"; }
+success() { echo -e "${GREEN}✅ [OK]${NC} $1"; }
+warn() { echo -e "${YELLOW}⚠️  [WARN]${NC} $1"; }
+error() { echo -e "${RED}❌ [ERROR]${NC} $1" >&2; exit 1; }
+prompt() { echo -e -n "${YELLOW}👉 [PROMPT]${NC} $1"; }
 
 run() {
     if [[ "${DRY_RUN:-0}" == "1" ]]; then
@@ -69,8 +70,8 @@ detect_platform() {
     ARCH="$(uname -m)"
 
     case "$OS" in
-        Linux)  PLATFORM="linux" ;;
-        Darwin) PLATFORM="macos" ;;
+        Linux)  PLATFORM="linux"; PLATFORM_ICON="🐧 linux" ;;
+        Darwin) PLATFORM="macos"; PLATFORM_ICON="🍎 macOS" ;;
         *)      error "Unsupported OS: $OS. Use install.ps1 for Windows." ;;
     esac
 
@@ -80,7 +81,7 @@ detect_platform() {
         *)              error "Unsupported architecture: $ARCH" ;;
     esac
 
-    info "Detected: $PLATFORM ($ARCH_LABEL)"
+    info "Detected: $PLATFORM_ICON ($ARCH_LABEL)"
 }
 
 # Detect Linux package manager
@@ -143,7 +144,7 @@ get_version() {
     fi
 
     if [ -c /dev/tty ]; then
-        echo -e -n "${YELLOW}[PROMPT]${NC} Latest version is v$RELEASE_VERSION. Enter version to install or press Enter for latest [v$RELEASE_VERSION]: "
+        prompt "Latest version is v$RELEASE_VERSION. Enter version to install or press Enter for latest [v$RELEASE_VERSION]: "
         if read -r user_ver < /dev/tty; then
             user_ver=$(echo "$user_ver" | tr -d '[:space:]')
             if [[ -n "$user_ver" && "$user_ver" != "y" && "$user_ver" != "Y" ]]; then
@@ -184,19 +185,31 @@ build_download_url() {
             ;;
         macos)
             local macos_arch="aarch64"
-            local default_key="a"
+            local default_key="1"
+            
+            local aarch64_rec="  <- Recommended for your Mac"
+            local x64_rec=""
+
             if [[ "$ARCH_LABEL" == "x86_64" ]]; then
                 macos_arch="x64"
-                default_key="i"
+                default_key="2"
+                aarch64_rec=""
+                x64_rec="  <- Recommended for your Mac"
             fi
 
             if [ -c /dev/tty ]; then
-                echo -e -n "${YELLOW}[PROMPT]${NC} Detected macOS ($macos_arch). Download [a]pple silicon (aarch64) or [i]ntel (x64)? [$default_key]: "
+                echo ""
+                echo -e "🛠️  ${BLUE}Please choose your architecture:${NC}"
+                echo -e "   [1] 🍎 Apple Silicon (aarch64)${GREEN}${aarch64_rec}${NC}"
+                echo -e "   [2] 💻 Intel (x64)${GREEN}${x64_rec}${NC}"
+                echo ""
+                prompt "Choose an option [$default_key]: "
+                
                 if read -r user_arch < /dev/tty; then
-                    user_arch=$(echo "$user_arch" | tr '[:upper:]' '[:lower:]')
-                    if [[ "$user_arch" == "a" || "$user_arch" == "apple" || "$user_arch" == "aarch64" ]]; then
+                    user_arch=$(echo "$user_arch" | tr -d '[:space:]')
+                    if [[ "$user_arch" == "1" ]]; then
                         macos_arch="aarch64"
-                    elif [[ "$user_arch" == "i" || "$user_arch" == "intel" || "$user_arch" == "x64" || "$user_arch" == "x86_64" ]]; then
+                    elif [[ "$user_arch" == "2" ]]; then
                         macos_arch="x64"
                     fi
                 fi
@@ -330,7 +343,7 @@ main() {
 
     echo ""
     echo -e "${BLUE}========================================${NC}"
-    echo -e "${BLUE}    ${APP_NAME} Installer${NC}"
+    echo -e "${BLUE}   🚀 ${APP_NAME} Installer${NC}"
     echo -e "${BLUE}========================================${NC}"
     echo ""
 
