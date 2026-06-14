@@ -67,6 +67,8 @@ brew install --no-quarantine theasmat/llm-quota/llm-quota
 
 ```
 
+> **Note for macOS Users:** If you install the app manually and encounter "App is damaged" or "Unidentified developer" errors, please check the [macOS Troubleshooting Guide](macOS_troubleshooting.md) for quick solutions.
+
 ## 🚀 Downloads
 
 Select the appropriate package for the target operating system.
