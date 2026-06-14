@@ -1,4 +1,4 @@
-import { LayoutDashboard, Settings, Moon, Sun, Minimize2, LogOut, PanelLeftClose, PanelLeftOpen, Sparkles } from 'lucide-react';
+import { LayoutDashboard, Settings, Moon, Sun, Minimize2, LogOut, PanelLeftClose, PanelLeftOpen, Sparkles, PanelTop, AppWindow } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useConfigStore } from '../../stores/useConfigStore';
 import { isTauri, isLinux } from '../../utils/env';
@@ -61,6 +61,11 @@ export function Sidebar() {
         window.location.reload();
     };
 
+    const toggleTrayMode = async () => {
+        if (!config) return;
+        await saveConfig({ ...config, tray_mode: !config.tray_mode }, false);
+    };
+
     return (
         <aside className={`flex flex-col h-full bg-[#fafafa] dark:bg-[#1c1c1c] border-r border-[#dfdfdf] dark:border-[#2b2b2b] relative z-50 transition-all duration-300 ease-in-out ${isSidebarCollapsed ? 'w-[80px]' : 'w-[260px]'}`}>
             {/* Drag region for Tauri */}
@@ -100,6 +105,17 @@ export function Sidebar() {
                     >
                         <Minimize2 className="w-4 h-4" />
                     </button>
+
+                    {/* Tray Mode Toggle */}
+                    {isTauri() && (
+                        <button
+                            onClick={toggleTrayMode}
+                            className="w-8 h-8 rounded-md flex items-center justify-center transition-colors duration-200 text-[#707070] hover:text-[#171717] hover:bg-gray-200 dark:text-[#9a9a9a] dark:hover:text-[#ffffff] dark:hover:bg-white/10"
+                            title={config?.tray_mode ? t('nav.full_app_mode', 'Switch to Full App') : t('nav.menu_bar_mode', 'Switch to Menu Bar')}
+                        >
+                            {config?.tray_mode ? <AppWindow className="w-4 h-4" /> : <PanelTop className="w-4 h-4" />}
+                        </button>
+                    )}
 
                     {/* Theme Toggle */}
                     <button
