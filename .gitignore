@@ -33,7 +33,6 @@ agents.md
 mcp/
 mcp.md
 .gemini/
-skills/
 *.skill.md
 
 # Build output
