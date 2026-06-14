@@ -157,6 +157,12 @@ The compiled binaries will be available in the `src-tauri/target/release` direct
 
 ## 📷 Screenshots
 
+<div align="center">
+  <img src="assets/screenshots/home.png" width="45%" alt="Home Screen" />
+  &nbsp;&nbsp;
+  <img src="assets/screenshots/gemini.png" width="45%" alt="Gemini Screen" />
+</div>
+
 > **Note**: These screenshots demonstrate the ultra-compact UI in dark and light themes.
 
 ## 🤝 Contributing
