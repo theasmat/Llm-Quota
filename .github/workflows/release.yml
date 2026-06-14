@@ -277,7 +277,13 @@ jobs:
           sed -i "s/RELEASE_VERSION=\".*\" # CI_UPDATED_VERSION/RELEASE_VERSION=\"$VER\" # CI_UPDATED_VERSION/g" install/linux.sh
           
           python3 scripts/update_readme_downloads.py
-          git add README.md install/mac.sh install/linux.sh
+          
+          # Auto-generate CHANGELOG.md
+          npm install -g conventional-changelog-cli
+          touch CHANGELOG.md
+          conventional-changelog -p angular -i CHANGELOG.md -s -r 0
+          
+          git add README.md install/mac.sh install/linux.sh CHANGELOG.md
           git commit -m "docs: auto-update downloads and install script for release ${RELEASE_TAG}" || echo "No changes to commit"
           git push origin master || echo "Failed to push README update"
 

@@ -169,13 +169,15 @@ The compiled binaries will be available in the `src-tauri/target/release` direct
 
 Contributions, issues, and feature requests are welcome!
 
-Feel free to check out the [issues page](https://github.com/theasmat/llm-quota/issues).
+Please read our [Contributing Guide](./CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
 
 1. **Fork** the project
 2. **Create** a feature branch (`git checkout -b feature/AmazingFeature`)
-3. **Commit** changes (`git commit -m 'Add some AmazingFeature'`)
+3. **Commit** changes (`git commit -m 'feat: add some AmazingFeature'`)
 4. **Push** to the branch (`git push origin feature/AmazingFeature`)
 5. **Open** a Pull Request
+
+By participating in this project, you agree to abide by the [Code of Conduct](./CODE_OF_CONDUCT.md).
 
 ## 💬 Feedback & Support
 
