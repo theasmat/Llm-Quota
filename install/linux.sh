@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Llm Quota Install Script (Linux + macOS)
-# Usage: curl -fsSL https://raw.githubusercontent.com/theasmat/llm-quota/master/install.sh | bash
+# Llm Quota Install Script (Linux)
+# Usage: curl -fsSL https://raw.githubusercontent.com/theasmat/llm-quota/master/install/linux.sh | bash
 #
 # Environment variables:
-#   VERSION     - Install specific version (e.g., "4.1.20"), default: latest
+#   VERSION     - Install specific version (e.g., "0.1.1"), default: latest
 #   DRY_RUN     - Set to "1" to print commands without executing
 
 set -euo pipefail
@@ -38,13 +38,13 @@ run() {
 # Show help
 show_help() {
     cat << EOF
-${APP_NAME} Install Script
+${APP_NAME} Linux Install Script
 
 Usage:
-    curl -fsSL https://raw.githubusercontent.com/${REPO}/master/install.sh | bash
+    curl -fsSL https://raw.githubusercontent.com/${REPO}/master/install/linux.sh | bash
 
     # Install specific version
-    curl -fsSL https://raw.githubusercontent.com/${REPO}/master/install.sh | VERSION=4.2.2 bash
+    curl -fsSL https://raw.githubusercontent.com/${REPO}/master/install/linux.sh | VERSION=0.1.1 bash
 
 Options:
     --help      Show this help message
@@ -57,8 +57,6 @@ Environment Variables:
 Supported Platforms:
     - Linux x86_64:  .deb (Debian/Ubuntu), .rpm (Fedora/RHEL), .AppImage (Universal)
     - Linux aarch64: .deb (Debian/Ubuntu), .rpm (Fedora/RHEL), .AppImage (Universal)
-    - macOS x86_64:  .dmg
-    - macOS arm64:   .dmg
 
 EOF
     exit 0
@@ -69,11 +67,12 @@ detect_platform() {
     OS="$(uname -s)"
     ARCH="$(uname -m)"
 
-    case "$OS" in
-        Linux)  PLATFORM="linux"; PLATFORM_ICON="🐧 linux" ;;
-        Darwin) PLATFORM="macos"; PLATFORM_ICON="🍎 macOS" ;;
-        *)      error "Unsupported OS: $OS. Use install.ps1 for Windows." ;;
-    esac
+    if [[ "$OS" != "Linux" ]]; then
+        error "This script is for Linux. Use install/mac.sh for macOS or install.ps1 for Windows."
+    fi
+
+    PLATFORM="linux"
+    PLATFORM_ICON="🐧 linux"
 
     case "$ARCH" in
         x86_64|amd64)   ARCH_LABEL="x86_64"; DEB_ARCH="amd64"; RPM_ARCH="x86_64" ;;
@@ -86,10 +85,6 @@ detect_platform() {
 
 # Detect Linux package manager
 detect_linux_distro() {
-    if [[ "$PLATFORM" != "linux" ]]; then
-        return
-    fi
-
     if command -v apt-get &>/dev/null; then
         PKG_MANAGER="apt"
         PKG_EXT="deb"
@@ -160,63 +155,24 @@ get_version() {
 build_download_url() {
     local base_url="https://github.com/${REPO}/releases/download/v${RELEASE_VERSION}"
 
-    case "$PLATFORM" in
-        linux)
-            case "$PKG_EXT" in
-                deb)
-                    DOWNLOAD_URL="${base_url}/Llm.Quota_${RELEASE_VERSION}_${DEB_ARCH}.deb"
-                    FILENAME="Llm.Quota_${RELEASE_VERSION}_${DEB_ARCH}.deb"
-                    ;;
-                rpm)
-                    DOWNLOAD_URL="${base_url}/Llm.Quota-${RELEASE_VERSION}-1.${RPM_ARCH}.rpm"
-                    FILENAME="Llm.Quota-${RELEASE_VERSION}-1.${RPM_ARCH}.rpm"
-                    ;;
-                AppImage)
-                    local appimage_arch
-                    if [[ "$ARCH_LABEL" == "x86_64" ]]; then
-                        appimage_arch="amd64"
-                    else
-                        appimage_arch="aarch64"
-                    fi
-                    DOWNLOAD_URL="${base_url}/Llm.Quota_${RELEASE_VERSION}_${appimage_arch}.AppImage"
-                    FILENAME="Llm.Quota_${RELEASE_VERSION}_${appimage_arch}.AppImage"
-                    ;;
-            esac
+    case "$PKG_EXT" in
+        deb)
+            DOWNLOAD_URL="${base_url}/Llm.Quota_${RELEASE_VERSION}_${DEB_ARCH}.deb"
+            FILENAME="Llm.Quota_${RELEASE_VERSION}_${DEB_ARCH}.deb"
             ;;
-        macos)
-            local macos_arch="aarch64"
-            local default_key="1"
-            
-            local aarch64_rec="  <- Recommended for your Mac"
-            local x64_rec=""
-
+        rpm)
+            DOWNLOAD_URL="${base_url}/Llm.Quota-${RELEASE_VERSION}-1.${RPM_ARCH}.rpm"
+            FILENAME="Llm.Quota-${RELEASE_VERSION}-1.${RPM_ARCH}.rpm"
+            ;;
+        AppImage)
+            local appimage_arch
             if [[ "$ARCH_LABEL" == "x86_64" ]]; then
-                macos_arch="x64"
-                default_key="2"
-                aarch64_rec=""
-                x64_rec="  <- Recommended for your Mac"
+                appimage_arch="amd64"
+            else
+                appimage_arch="aarch64"
             fi
-
-            if [ -c /dev/tty ]; then
-                echo ""
-                echo -e "🛠️  ${BLUE}Please choose your architecture:${NC}"
-                echo -e "   [1] 🍎 Apple Silicon (aarch64)${GREEN}${aarch64_rec}${NC}"
-                echo -e "   [2] 💻 Intel (x64)${GREEN}${x64_rec}${NC}"
-                echo ""
-                prompt "Choose an option [$default_key]: "
-                
-                if read -r user_arch < /dev/tty; then
-                    user_arch=$(echo "$user_arch" | tr -d '[:space:]')
-                    if [[ "$user_arch" == "1" ]]; then
-                        macos_arch="aarch64"
-                    elif [[ "$user_arch" == "2" ]]; then
-                        macos_arch="x64"
-                    fi
-                fi
-            fi
-
-            DOWNLOAD_URL="${base_url}/Llm.Quota_${RELEASE_VERSION}_${macos_arch}.dmg"
-            FILENAME="Llm.Quota_${RELEASE_VERSION}_${macos_arch}.dmg"
+            DOWNLOAD_URL="${base_url}/Llm.Quota_${RELEASE_VERSION}_${appimage_arch}.AppImage"
+            FILENAME="Llm.Quota_${RELEASE_VERSION}_${appimage_arch}.AppImage"
             ;;
     esac
 
@@ -287,44 +243,6 @@ install_linux() {
     success "${APP_NAME} installed successfully!"
 }
 
-# Install on macOS
-install_macos() {
-    info "Installing ${APP_NAME}..."
-
-    if [[ "${DRY_RUN:-0}" == "1" ]]; then
-        echo -e "${YELLOW}[DRY-RUN]${NC} hdiutil attach $DOWNLOAD_PATH -nobrowse -noautoopen"
-        echo -e "${YELLOW}[DRY-RUN]${NC} cp -R <mount>/${APP_NAME}.app /Applications/"
-        echo -e "${YELLOW}[DRY-RUN]${NC} hdiutil detach <mount>"
-        echo -e "${YELLOW}[DRY-RUN]${NC} sudo xattr -rd com.apple.quarantine /Applications/${APP_NAME}.app"
-        return
-    fi
-
-    # Mount DMG
-    local mount_output mount_point
-    mount_output=$(hdiutil attach "$DOWNLOAD_PATH" -nobrowse -noautoopen 2>&1)
-    mount_point=$(echo "$mount_output" | grep -o '/Volumes/.*' | head -n1)
-
-    if [[ -z "$mount_point" ]]; then
-        error "Failed to mount DMG. Output: $mount_output"
-    fi
-
-    # Copy app to /Applications
-    if [[ -d "/Applications/${APP_NAME}.app" ]]; then
-        info "Removing existing installation..."
-        rm -rf "/Applications/${APP_NAME}.app"
-    fi
-    cp -R "${mount_point}/${APP_NAME}.app" /Applications/
-
-    # Unmount DMG
-    hdiutil detach "$mount_point" -quiet 2>/dev/null || true
-
-    # Remove quarantine attribute to avoid "app is damaged" error
-    info "Removing quarantine attribute..."
-    run xattr -cr "/Applications/${APP_NAME}.app" 2>/dev/null || true
-
-    success "${APP_NAME} installed to /Applications!"
-}
-
 # Cleanup
 cleanup() {
     if [[ -n "${TEMP_DIR:-}" ]] && [[ -d "$TEMP_DIR" ]]; then
@@ -337,7 +255,7 @@ main() {
     for arg in "$@"; do
         case "$arg" in
             --help|-h)    show_help ;;
-            --version|-v) echo "install.sh v1.0.0"; exit 0 ;;
+            --version|-v) echo "linux.sh v1.0.0"; exit 0 ;;
         esac
     done
 
@@ -354,11 +272,7 @@ main() {
     get_version
     build_download_url
     download_installer
-
-    case "$PLATFORM" in
-        linux) install_linux ;;
-        macos) install_macos ;;
-    esac
+    install_linux
 
     echo ""
     success "Installation complete!"

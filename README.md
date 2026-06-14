@@ -51,13 +51,18 @@ Llm Quota is a compact, high-density dashboard built with Tauri and React to man
 
 ## 💻 Installation
 
-### Automated Install Script (macOS & Linux)
+### Automated Install Scripts
 
-The easiest way to install on macOS and Linux is by using the automated script:
+The easiest way to install on macOS and Linux is by using the automated scripts:
 
+**macOS:**
 ```bash
-curl -fsSL https://raw.githubusercontent.com/theasmat/llm-quota/master/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/theasmat/llm-quota/master/install/mac.sh | bash
+```
 
+**Linux:**
+```bash
+curl -fsSL https://raw.githubusercontent.com/theasmat/llm-quota/master/install/linux.sh | bash
 ```
 
 ### macOS (Homebrew)

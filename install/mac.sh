@@ -1,0 +1,265 @@
+#!/usr/bin/env bash
+# Llm Quota Install Script (macOS)
+# Usage: curl -fsSL https://raw.githubusercontent.com/theasmat/llm-quota/master/install/mac.sh | bash
+#
+# Environment variables:
+#   VERSION     - Install specific version (e.g., "0.1.1"), default: latest
+#   DRY_RUN     - Set to "1" to print commands without executing
+
+set -euo pipefail
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+REPO="theasmat/llm-quota"
+APP_NAME="Llm Quota"
+APP_ID="com.theasmat.llm-quota"
+GITHUB_API="https://api.github.com/repos/${REPO}/releases"
+
+# Helper functions
+info() { echo -e "${BLUE}ℹ️  [INFO]${NC} $1"; }
+success() { echo -e "${GREEN}✅ [OK]${NC} $1"; }
+warn() { echo -e "${YELLOW}⚠️  [WARN]${NC} $1"; }
+error() { echo -e "${RED}❌ [ERROR]${NC} $1" >&2; exit 1; }
+prompt() { echo -e -n "${YELLOW}👉 [PROMPT]${NC} $1"; }
+
+run() {
+    if [[ "${DRY_RUN:-0}" == "1" ]]; then
+        echo -e "${YELLOW}[DRY-RUN]${NC} $*"
+    else
+        "$@"
+    fi
+}
+
+# Show help
+show_help() {
+    cat << EOF
+${APP_NAME} macOS Install Script
+
+Usage:
+    curl -fsSL https://raw.githubusercontent.com/${REPO}/master/install/mac.sh | bash
+
+    # Install specific version
+    curl -fsSL https://raw.githubusercontent.com/${REPO}/master/install/mac.sh | VERSION=0.1.1 bash
+
+Options:
+    --help      Show this help message
+    --version   Show script version
+
+Environment Variables:
+    VERSION     Install specific version (default: latest)
+    DRY_RUN     Set to "1" to preview commands without executing
+
+Supported Platforms:
+    - macOS x86_64:  .dmg
+    - macOS arm64:   .dmg
+
+EOF
+    exit 0
+}
+
+# Detect OS and architecture
+detect_platform() {
+    OS="$(uname -s)"
+    ARCH="$(uname -m)"
+
+    if [[ "$OS" != "Darwin" ]]; then
+        error "This script is for macOS. Use install/linux.sh for Linux or install.ps1 for Windows."
+    fi
+
+    PLATFORM="macos"
+    PLATFORM_ICON="🍎 macOS"
+
+    case "$ARCH" in
+        x86_64|amd64)   ARCH_LABEL="x86_64" ;;
+        aarch64|arm64)  ARCH_LABEL="aarch64" ;;
+        *)              error "Unsupported architecture: $ARCH" ;;
+    esac
+
+    info "Detected: $PLATFORM_ICON ($ARCH_LABEL)"
+}
+
+# Get latest or specific version
+get_version() {
+    if [[ -n "${VERSION:-}" ]]; then
+        RELEASE_VERSION="$VERSION"
+        info "Using specified version: v$RELEASE_VERSION"
+        return
+    fi
+
+    info "Fetching latest version..."
+
+    # Method 1: Try GitHub API
+    local response
+    if response=$(curl -fsSL -H "User-Agent: Antigravity-Installer" "${GITHUB_API}/latest" 2>/dev/null); then
+        RELEASE_VERSION=$(echo "$response" | awk -F'"tag_name": *"' '{print $2}' | awk -F'"' '{print $1}' | sed 's/^v//')
+        if [[ -n "$RELEASE_VERSION" ]]; then
+            info "Latest version: v$RELEASE_VERSION"
+            return
+        fi
+    fi
+
+    # Method 2: Fallback - parse from redirect URL (no rate limit)
+    info "API rate limited, using fallback method..."
+    local redirect_url
+    redirect_url=$(curl -fsSI "https://github.com/${REPO}/releases/latest" 2>/dev/null | grep -i "^location:" | tr -d '\r' | awk '{print $2}')
+
+    if [[ -n "$redirect_url" && "$redirect_url" == *"/tag/"* ]]; then
+        RELEASE_VERSION=$(echo "$redirect_url" | sed -E 's|.*/tag/v?||')
+    fi
+
+    # Method 3: Hardcoded fallback updated by CI
+    if [[ -z "${RELEASE_VERSION:-}" ]]; then
+        RELEASE_VERSION="0.1.1" # CI_UPDATED_VERSION
+        warn "Failed to fetch latest version from network. Falling back to hardcoded v$RELEASE_VERSION"
+    fi
+
+    if [ -c /dev/tty ]; then
+        prompt "Latest version is v$RELEASE_VERSION. Enter version to install or press Enter for latest [v$RELEASE_VERSION]: "
+        if read -r user_ver < /dev/tty; then
+            user_ver=$(echo "$user_ver" | tr -d '[:space:]')
+            if [[ -n "$user_ver" && "$user_ver" != "y" && "$user_ver" != "Y" ]]; then
+                RELEASE_VERSION="${user_ver#v}"
+            fi
+        fi
+    fi
+
+    info "Selected version: v$RELEASE_VERSION"
+}
+
+# Build download URL based on platform and package manager
+build_download_url() {
+    local base_url="https://github.com/${REPO}/releases/download/v${RELEASE_VERSION}"
+
+    local macos_arch="aarch64"
+    local default_key="1"
+    
+    local aarch64_rec="  <- Recommended for your Mac"
+    local x64_rec=""
+
+    if [[ "$ARCH_LABEL" == "x86_64" ]]; then
+        macos_arch="x64"
+        default_key="2"
+        aarch64_rec=""
+        x64_rec="  <- Recommended for your Mac"
+    fi
+
+    if [ -c /dev/tty ]; then
+        echo ""
+        echo -e "🛠️  ${BLUE}Please choose your architecture:${NC}"
+        echo -e "   [1] 🍎 Apple Silicon (aarch64)${GREEN}${aarch64_rec}${NC}"
+        echo -e "   [2] 💻 Intel (x64)${GREEN}${x64_rec}${NC}"
+        echo ""
+        prompt "Choose an option [$default_key]: "
+        
+        if read -r user_arch < /dev/tty; then
+            user_arch=$(echo "$user_arch" | tr -d '[:space:]')
+            if [[ "$user_arch" == "1" ]]; then
+                macos_arch="aarch64"
+            elif [[ "$user_arch" == "2" ]]; then
+                macos_arch="x64"
+            fi
+        fi
+    fi
+
+    DOWNLOAD_URL="${base_url}/Llm.Quota_${RELEASE_VERSION}_${macos_arch}.dmg"
+    FILENAME="Llm.Quota_${RELEASE_VERSION}_${macos_arch}.dmg"
+
+    info "Download URL: $DOWNLOAD_URL"
+}
+
+# Download installer
+download_installer() {
+    TEMP_DIR=$(mktemp -d)
+    DOWNLOAD_PATH="${TEMP_DIR}/${FILENAME}"
+
+    info "Downloading ${APP_NAME} v${RELEASE_VERSION}..."
+    run curl -fSL --progress-bar -o "$DOWNLOAD_PATH" "$DOWNLOAD_URL"
+
+    if [[ "${DRY_RUN:-0}" != "1" ]] && [[ ! -f "$DOWNLOAD_PATH" ]]; then
+        error "Download failed. Check your network or try a different version."
+    fi
+
+    success "Downloaded to $DOWNLOAD_PATH"
+}
+
+# Install on macOS
+install_macos() {
+    info "Installing ${APP_NAME}..."
+
+    if [[ "${DRY_RUN:-0}" == "1" ]]; then
+        echo -e "${YELLOW}[DRY-RUN]${NC} hdiutil attach $DOWNLOAD_PATH -nobrowse -noautoopen"
+        echo -e "${YELLOW}[DRY-RUN]${NC} cp -R <mount>/${APP_NAME}.app /Applications/"
+        echo -e "${YELLOW}[DRY-RUN]${NC} hdiutil detach <mount>"
+        echo -e "${YELLOW}[DRY-RUN]${NC} sudo xattr -rd com.apple.quarantine /Applications/${APP_NAME}.app"
+        return
+    fi
+
+    # Mount DMG
+    local mount_output mount_point
+    mount_output=$(hdiutil attach "$DOWNLOAD_PATH" -nobrowse -noautoopen 2>&1)
+    mount_point=$(echo "$mount_output" | grep -o '/Volumes/.*' | head -n1)
+
+    if [[ -z "$mount_point" ]]; then
+        error "Failed to mount DMG. Output: $mount_output"
+    fi
+
+    # Copy app to /Applications
+    if [[ -d "/Applications/${APP_NAME}.app" ]]; then
+        info "Removing existing installation..."
+        rm -rf "/Applications/${APP_NAME}.app"
+    fi
+    cp -R "${mount_point}/${APP_NAME}.app" /Applications/
+
+    # Unmount DMG
+    hdiutil detach "$mount_point" -quiet 2>/dev/null || true
+
+    # Remove quarantine attribute to avoid "app is damaged" error
+    info "Removing quarantine attribute..."
+    run xattr -cr "/Applications/${APP_NAME}.app" 2>/dev/null || true
+
+    success "${APP_NAME} installed to /Applications!"
+}
+
+# Cleanup
+cleanup() {
+    if [[ -n "${TEMP_DIR:-}" ]] && [[ -d "$TEMP_DIR" ]]; then
+        rm -rf "$TEMP_DIR"
+    fi
+}
+
+# Main
+main() {
+    for arg in "$@"; do
+        case "$arg" in
+            --help|-h)    show_help ;;
+            --version|-v) echo "mac.sh v1.0.0"; exit 0 ;;
+        esac
+    done
+
+    echo ""
+    echo -e "${BLUE}========================================${NC}"
+    echo -e "${BLUE}   🚀 ${APP_NAME} Installer${NC}"
+    echo -e "${BLUE}========================================${NC}"
+    echo ""
+
+    trap cleanup EXIT
+
+    detect_platform
+    get_version
+    build_download_url
+    download_installer
+    install_macos
+
+    echo ""
+    success "Installation complete!"
+    echo ""
+    info "Launch '${APP_NAME}' from your application menu or launcher."
+    echo ""
+}
+
+main "$@"
