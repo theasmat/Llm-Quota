@@ -255,12 +255,12 @@ jobs:
         env:
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
-          python3 scripts/update_readme_downloads.py
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git fetch origin master
           git checkout master
           git pull origin master --rebase || true
+          python3 scripts/update_readme_downloads.py
           git add README.md
           git commit -m "docs: auto-update direct download links for release ${RELEASE_TAG}" || echo "No changes to commit"
           git push origin master || echo "Failed to push README update"
