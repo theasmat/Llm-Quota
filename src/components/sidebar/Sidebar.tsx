@@ -1,4 +1,4 @@
-import { LayoutDashboard, Settings, Moon, Sun, Minimize2, LogOut, PanelLeftClose, PanelLeftOpen, Sparkles, PanelTop, AppWindow } from 'lucide-react';
+import { LayoutDashboard, Settings, Moon, Sun, LogOut, PanelLeftClose, PanelLeftOpen, Sparkles, PanelTop, AppWindow } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useConfigStore } from '../../stores/useConfigStore';
 import { isTauri, isLinux } from '../../utils/env';
@@ -9,7 +9,7 @@ import { useViewStore } from '../../stores/useViewStore';
 export function Sidebar() {
     const { t } = useTranslation();
     const { config, saveConfig } = useConfigStore();
-    const { setMiniView, isSidebarCollapsed, toggleSidebar } = useViewStore();
+    const { isSidebarCollapsed, toggleSidebar } = useViewStore();
 
     const navItems = [
         { path: '/', label: t('nav.dashboard', 'Dashboard'), icon: LayoutDashboard },
@@ -97,14 +97,6 @@ export function Sidebar() {
             {/* Bottom Actions */}
             <div className={`p-4 border-t border-[#dfdfdf] dark:border-[#2b2b2b] bg-[#ffffff] dark:bg-[#1c1c1c] relative z-20 flex flex-col ${isSidebarCollapsed ? 'items-center' : ''}`}>
                 <div className={`flex items-center gap-2 mb-2 ${isSidebarCollapsed ? 'flex-col' : 'justify-around'}`}>
-                    {/* Mini View Toggle */}
-                    <button
-                        onClick={() => setMiniView(true)}
-                        className="w-8 h-8 rounded-md flex items-center justify-center transition-colors duration-200 text-[#707070] hover:text-[#171717] hover:bg-gray-200 dark:text-[#9a9a9a] dark:hover:text-[#ffffff] dark:hover:bg-white/10"
-                        title={t('nav.mini_view', 'Mini View')}
-                    >
-                        <Minimize2 className="w-4 h-4" />
-                    </button>
 
                     {/* Tray Mode Toggle */}
                     {isTauri() && (

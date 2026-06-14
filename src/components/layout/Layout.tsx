@@ -1,32 +1,32 @@
 import { Outlet } from 'react-router-dom';
 
-import { Sidebar } from '../sidebar/Sidebar';
-import BackgroundTaskRunner from '../common/BackgroundTaskRunner';
-import ToastContainer from '../common/ToastContainer';
-import { useViewStore } from '../../stores/useViewStore';
-import MiniView from './MiniView';
 import { useEffect } from 'react';
 import { isTauri } from '../../utils/env';
 import { ensureFullViewState } from '../../utils/windowManager';
+import { useConfigStore } from '../../stores/useConfigStore';
+import { TrayUI } from '../../platform';
+import { Sidebar } from '../sidebar/Sidebar';
+import BackgroundTaskRunner from '../common/BackgroundTaskRunner';
+import ToastContainer from '../common/ToastContainer';
 
 function Layout() {
-    const { isMiniView } = useViewStore();
+    const { config } = useConfigStore();
 
-    // Ensure correct window state when in Full View (not Mini View)
-    // This handles the case where the app was closed in Mini View (small size, no decorations)
+    // Ensure correct window state when in Full View (not Menu Bar mode)
+    // This handles the case where the app was closed in Menu Bar mode (small size, no decorations)
     // and restarted (defaults to Full View state but keeps last window properties)
     useEffect(() => {
-        if (!isMiniView && isTauri()) {
+        if (!config?.tray_mode && isTauri()) {
             ensureFullViewState();
         }
-    }, [isMiniView]);
+    }, [config?.tray_mode]);
 
-    if (isMiniView) {
+    if (config?.tray_mode) {
         return (
             <>
                 <BackgroundTaskRunner />
                 <ToastContainer />
-                <MiniView />
+                <TrayUI />
             </>
         );
     }

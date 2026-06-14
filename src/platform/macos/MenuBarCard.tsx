@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
 import { Maximize2, RefreshCw, Clock, ShieldAlert, Tag, Activity } from 'lucide-react';
-import { useViewStore } from '../../stores/useViewStore';
 import { useAccountStore } from '../../stores/useAccountStore';
 import { isTauri } from '../../utils/env';
 import { getCurrentWindow } from '@tauri-apps/api/window';
@@ -24,8 +23,7 @@ interface ProxyRequestLog {
     mapped_model?: string
 }
 
-export default function MiniView() {
-    const { setMiniView } = useViewStore();
+export default function MacMenuBarCard() {
     const { currentAccount, refreshQuota, fetchCurrentAccount } = useAccountStore();
     
     const { t } = useTranslation();
@@ -108,7 +106,12 @@ export default function MiniView() {
 
     const handleMaximize = async () => {
         await exitMiniMode();
-        setMiniView(false);
+        // Turn off tray mode to open full app
+        const { useConfigStore } = await import('../../stores/useConfigStore');
+        const configStore = useConfigStore.getState();
+        if (configStore.config) {
+            await configStore.saveConfig({ ...configStore.config, tray_mode: false }, false);
+        }
     };
 
 
