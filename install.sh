@@ -140,7 +140,17 @@ get_version() {
         error "Failed to fetch latest version. Try specifying VERSION=x.x.x"
     fi
 
-    info "Latest version: v$RELEASE_VERSION"
+    if [ -c /dev/tty ]; then
+        echo -e -n "${YELLOW}[PROMPT]${NC} Latest version is v$RELEASE_VERSION. Enter version to install or press Enter for latest [v$RELEASE_VERSION]: "
+        if read -r user_ver < /dev/tty; then
+            user_ver=$(echo "$user_ver" | tr -d '[:space:]')
+            if [[ -n "$user_ver" && "$user_ver" != "y" && "$user_ver" != "Y" ]]; then
+                RELEASE_VERSION="${user_ver#v}"
+            fi
+        fi
+    fi
+
+    info "Selected version: v$RELEASE_VERSION"
 }
 
 # Build download URL based on platform and package manager
