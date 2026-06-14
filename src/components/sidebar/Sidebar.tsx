@@ -63,7 +63,15 @@ export function Sidebar() {
 
     const toggleTrayMode = async () => {
         if (!config) return;
-        await saveConfig({ ...config, tray_mode: !config.tray_mode }, false);
+        const newTrayMode = !config.tray_mode;
+        
+        if (newTrayMode && isTauri()) {
+            // Hide the window immediately before the React state triggers the resize
+            const { getCurrentWindow } = await import('@tauri-apps/api/window');
+            await getCurrentWindow().hide();
+        }
+        
+        await saveConfig({ ...config, tray_mode: newTrayMode }, false);
     };
 
     return (
