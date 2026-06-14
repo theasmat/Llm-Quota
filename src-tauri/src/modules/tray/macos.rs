@@ -5,8 +5,12 @@ use tauri::AppHandle;
 pub fn set_tray_mode(app: &AppHandle, enabled: bool) {
     // macOS: Use ActivationPolicy to hide/show from dock
     if enabled {
-        let _ = app.set_activation_policy(tauri::ActivationPolicy::Accessory);
+        if let Err(e) = app.set_activation_policy(tauri::ActivationPolicy::Accessory) {
+            eprintln!("Failed to set accessory policy: {}", e);
+        }
     } else {
-        let _ = app.set_activation_policy(tauri::ActivationPolicy::Regular);
+        if let Err(e) = app.set_activation_policy(tauri::ActivationPolicy::Regular) {
+            eprintln!("Failed to set regular policy: {}", e);
+        }
     }
 }

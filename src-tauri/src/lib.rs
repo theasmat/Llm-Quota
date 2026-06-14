@@ -30,13 +30,21 @@ pub fn run() {
             if let Some(window) = app.get_webview_window("main") {
                 let app_handle = app.handle().clone();
                 window.on_window_event(move |event| {
-                    if let tauri::WindowEvent::Focused(focused) = event {
-                        if !focused {
-                            let current_config = modules::config::load_config().unwrap_or_default();
-                            if current_config.tray_mode {
-                                let _ = app_handle.get_webview_window("main").unwrap().hide();
+                    match event {
+                        tauri::WindowEvent::Focused(focused) => {
+                            if !*focused {
+                                let current_config = modules::config::load_config().unwrap_or_default();
+                                if current_config.tray_mode {
+                                    let _ = app_handle.get_webview_window("main").unwrap().hide();
+                                }
                             }
                         }
+                        tauri::WindowEvent::CloseRequested { api, .. } => {
+                            // Hide the window instead of quitting the app
+                            let _ = app_handle.get_webview_window("main").unwrap().hide();
+                            api.prevent_close();
+                        }
+                        _ => {}
                     }
                 });
             }
