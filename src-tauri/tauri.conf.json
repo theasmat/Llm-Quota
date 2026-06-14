@@ -14,6 +14,7 @@
     "macOSPrivateApi": true,
     "windows": [
       {
+        "label": "main",
         "title": "Llm Quota",
         "width": 1024,
         "height": 700,
@@ -21,6 +22,18 @@
         "hiddenTitle": true,
         "transparent": true,
         "visible": false
+      },
+      {
+        "label": "tray",
+        "title": "Llm Quota Tray",
+        "width": 300,
+        "height": 400,
+        "decorations": false,
+        "transparent": true,
+        "visible": false,
+        "alwaysOnTop": true,
+        "resizable": false,
+        "skipTaskbar": true
       }
     ],
     "security": {

@@ -9,6 +9,9 @@ export const enterTrayUIState = async (contentHeight: number) => {
     if (!isTauri()) return;
     try {
         const win = getCurrentWindow();
+        
+        // Remember if the window was visible before we start changing its properties
+        const wasVisible = await win.isVisible();
 
         // Hide window decorations (title bar) first to ensure accurate sizing
         await win.setDecorations(false);
@@ -21,6 +24,12 @@ export const enterTrayUIState = async (contentHeight: number) => {
         await win.setShadow(true);
         // Disable resizing in tray mode
         await win.setResizable(false);
+        
+        // macOS NSWindow property changes (like setAlwaysOnTop or setDecorations) 
+        // can implicitly unhide the window. If it was hidden, force it back into hiding!
+        if (!wasVisible) {
+            await win.hide();
+        }
     } catch (error) {
         console.error('Failed to enter tray UI state:', error);
     }

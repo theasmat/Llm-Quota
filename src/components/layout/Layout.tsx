@@ -4,7 +4,6 @@ import { useEffect } from 'react';
 import { isTauri } from '../../utils/env';
 import { ensureFullViewState } from '../../utils/windowManager';
 import { useConfigStore } from '../../stores/useConfigStore';
-import { TrayUI } from '../../platform';
 import { Sidebar } from '../sidebar/Sidebar';
 import BackgroundTaskRunner from '../common/BackgroundTaskRunner';
 import ToastContainer from '../common/ToastContainer';
@@ -20,16 +19,6 @@ function Layout() {
             ensureFullViewState();
         }
     }, [config?.tray_mode]);
-
-    if (config?.tray_mode) {
-        return (
-            <>
-                <BackgroundTaskRunner />
-                <ToastContainer />
-                <TrayUI />
-            </>
-        );
-    }
 
     return (
         <div className="h-screen flex flex-row bg-white dark:bg-[#1c1c1c]">

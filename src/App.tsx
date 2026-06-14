@@ -5,14 +5,14 @@ import Dashboard from './pages/Dashboard';
 import Accounts from './pages/Accounts';
 import Settings from './pages/Settings';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useConfigStore } from './stores/useConfigStore';
 import { useAccountStore } from './stores/useAccountStore';
+import { TrayUI } from './platform';
 
 import { listen } from '@tauri-apps/api/event';
 import { isTauri } from './utils/env';
-
-
+import { getCurrentWindow } from '@tauri-apps/api/window';
 
 const router = createBrowserRouter([
   {
@@ -38,10 +38,22 @@ const router = createBrowserRouter([
 function App() {
   const { loadConfig } = useConfigStore();
   const { fetchCurrentAccount, fetchAccounts } = useAccountStore();
+  const [isTrayWindow, setIsTrayWindow] = useState(false);
+  const [windowLoaded, setWindowLoaded] = useState(!isTauri());
 
   useEffect(() => {
     loadConfig();
   }, [loadConfig]);
+
+  useEffect(() => {
+    if (isTauri()) {
+        const win = getCurrentWindow();
+        if (win.label === 'tray') {
+            setIsTrayWindow(true);
+        }
+        setWindowLoaded(true);
+    }
+  }, []);
 
 
   // Listen for tray events
@@ -85,6 +97,12 @@ function App() {
   }, [fetchCurrentAccount, fetchAccounts]);
 
 
+
+  if (!windowLoaded) return null;
+
+  if (isTrayWindow) {
+    return <TrayUI />;
+  }
 
   return (
     <RouterProvider router={router} />

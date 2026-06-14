@@ -1,112 +1,92 @@
-import { useEffect, useState, useRef } from 'react';
-import { Maximize2, RefreshCw, Clock, ShieldAlert, Tag, Activity } from 'lucide-react';
+import { useEffect, useRef } from 'react';
 import { useAccountStore } from '../../stores/useAccountStore';
 import { isTauri } from '../../utils/env';
-import { getCurrentWindow } from '@tauri-apps/api/window';
-import { motion, AnimatePresence } from 'framer-motion';
+import { enterTrayUIState } from '../../utils/windowManager';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
-import { formatTimeRemaining, formatCompactNumber } from '../../utils/format';
-import { enterTrayUIState, exitTrayUIState } from '../../utils/windowManager';
-import { getVersion } from '@tauri-apps/api/app';
+import { Maximize2, Sparkles, User, Database, Cpu, Zap, Power } from 'lucide-react';
+
 import { listen } from '@tauri-apps/api/event';
-
-
-interface ProxyRequestLog {
-    id: string;
-    model?: string;
-    input_tokens?: number;
-    output_tokens?: number;
-    timestamp: number;
-    status: number;
-    duration: number;
-    mapped_model?: string
-}
+import { getCurrentWindow } from '@tauri-apps/api/window';
 
 export default function MacMenuBarCard() {
     const { currentAccount, refreshQuota, fetchCurrentAccount } = useAccountStore();
-    
     const { t } = useTranslation();
-    const [isRefreshing, setIsRefreshing] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
-    const [appVersion, setAppVersion] = useState('0.0.0');
-    const [latestLog, setLatestLog] = useState<ProxyRequestLog | null>(null);
 
-    // Subscribe to proxy logs
+    // Fetch initial account state for the tray window
     useEffect(() => {
-        let unlistenFn: (() => void) | null = null;
+        fetchCurrentAccount();
+    }, [fetchCurrentAccount]);
 
-        const setupListener = async () => {
-            if (!isTauri()) return;
-            try {
-                unlistenFn = await listen<ProxyRequestLog>('proxy://request', (event) => {
-                    console.log(event)
-                    setLatestLog(event.payload);
-                });
-            } catch (e) {
-                console.error('Failed to setup log listener:', e);
-            }
-        };
-
-        setupListener();
-
-        return () => {
-            if (unlistenFn) unlistenFn();
-        };
-    }, []);
-
-    // Get app version
-    useEffect(() => {
-        const fetchVersion = async () => {
-            if (isTauri()) {
-                try {
-                    const version = await getVersion();
-                    setAppVersion(version);
-                } catch (e) {
-                    console.error('Failed to get app version:', e);
-                }
-            } else {
-                // Fallback for web mode if needed, or import from package.json
-                setAppVersion('4.2.2');
-            }
-        };
-        fetchVersion();
-    }, []);
-
-
-
-    // Enter mini mode & Auto-resize based on content
+    // Enter tray mode & Auto-resize based on content
     useEffect(() => {
         const adjustSize = async () => {
             if (isTauri() && containerRef.current) {
-                // Get the content height
                 const height = containerRef.current.scrollHeight;
-                // Calculate content height for the utility (which adds 20px padding)
-                // We want final height to be approx (scroll height - header adjustment)
                 await enterTrayUIState(height);
             }
         };
 
-        // Run initially and whenever account data (content) changes
-        // Use a small timeout to ensure rendering is complete
         const timer = setTimeout(adjustSize, 50);
         return () => clearTimeout(timer);
     }, [currentAccount]);
 
-    const handleRefresh = async () => {
-        if (!currentAccount || isRefreshing) return;
-        setIsRefreshing(true);
-        try {
-            await refreshQuota(currentAccount.id);
-            await fetchCurrentAccount();
-        } finally {
-            setTimeout(() => setIsRefreshing(false), 800);
-        }
-    };
+    // Focus lost & Inactivity timer (10s)
+    useEffect(() => {
+        if (!isTauri()) return;
+        const win = getCurrentWindow();
+        
+        // Hide on blur
+        const unlistenFocus = win.onFocusChanged(({ payload: focused }) => {
+            if (!focused) {
+                win.hide();
+            }
+        });
+
+        // 10s inactivity timer
+        let timeout: ReturnType<typeof setTimeout>;
+        const resetTimer = () => {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                win.hide();
+            }, 10000);
+        };
+
+        resetTimer();
+        window.addEventListener('mousemove', resetTimer);
+        window.addEventListener('keydown', resetTimer);
+
+        return () => {
+            unlistenFocus.then(f => f());
+            clearTimeout(timeout);
+            window.removeEventListener('mousemove', resetTimer);
+            window.removeEventListener('keydown', resetTimer);
+        };
+    }, []);
+
+    // Auto-refresh when tray icon is clicked
+    useEffect(() => {
+        if (!isTauri()) return;
+        const unlisten = listen('tray-opened', async () => {
+            if (currentAccount?.id) {
+                refreshQuota(currentAccount.id).catch(console.error);
+            }
+        });
+        
+        return () => {
+            unlisten.then(f => f());
+        };
+    }, [currentAccount?.id, refreshQuota]);
 
     const handleMaximize = async () => {
-        await exitTrayUIState();
-        // Turn off tray mode to open full app
+        if (!isTauri()) return;
+        const { invoke } = await import('@tauri-apps/api/core');
+        await invoke('show_main_window');
+        
+        const { getCurrentWindow } = await import('@tauri-apps/api/window');
+        await getCurrentWindow().hide();
+        
         const { useConfigStore } = await import('../../stores/useConfigStore');
         const configStore = useConfigStore.getState();
         if (configStore.config) {
@@ -114,15 +94,7 @@ export default function MacMenuBarCard() {
         }
     };
 
-
-    const handleMouseDown = () => {
-        if (isTauri()) {
-            getCurrentWindow().startDragging();
-        }
-    };
-
-
-    // Extract specific models to match AccountRow.tsx
+    // Extract specific models
     const geminiProModel = currentAccount?.quota?.models
         .filter(m =>
             m.name.toLowerCase() === 'gemini-3-pro-high'
@@ -142,188 +114,109 @@ export default function MacMenuBarCard() {
         .filter(m => claudeGroupNames.includes(m.name.toLowerCase()))
         .sort((a, b) => (a.percentage || 0) - (b.percentage || 0))[0];
 
-    // Helper to render a model row
-    const renderModelRow = (model: any, displayName: string, colorClass: string) => {
+    const renderModelRow = (model: any, displayName: string, colorClass: string, Icon: any) => {
         if (!model) return null;
-
-        // Determine status color based on percentage
         const getStatusColor = (p: number) => {
             if (p >= 50) return 'text-emerald-500';
             if (p >= 20) return 'text-amber-500';
             return 'text-rose-500';
         };
-
         const getBarColor = (p: number) => {
-            if (p >= 50) return colorClass === 'cyan' ? 'bg-gradient-to-r from-cyan-400 to-cyan-500' : 'bg-gradient-to-r from-emerald-400 to-emerald-500';
-            if (p >= 20) return colorClass === 'cyan' ? 'bg-gradient-to-r from-orange-400 to-orange-500' : 'bg-gradient-to-r from-amber-400 to-amber-500';
-            return 'bg-gradient-to-r from-rose-400 to-rose-500';
+            if (p >= 50) return colorClass === 'cyan' ? 'bg-gradient-to-r from-cyan-400 to-blue-500' : 'bg-gradient-to-r from-emerald-400 to-teal-500';
+            if (p >= 20) return colorClass === 'cyan' ? 'bg-gradient-to-r from-orange-400 to-amber-500' : 'bg-gradient-to-r from-amber-400 to-yellow-500';
+            return 'bg-gradient-to-r from-rose-400 to-red-500';
+        };
+        const getGlow = (p: number) => {
+            if (p >= 50) return colorClass === 'cyan' ? 'shadow-[0_0_10px_rgba(34,211,238,0.5)]' : 'shadow-[0_0_10px_rgba(52,211,153,0.5)]';
+            if (p >= 20) return colorClass === 'cyan' ? 'shadow-[0_0_10px_rgba(251,146,60,0.5)]' : 'shadow-[0_0_10px_rgba(251,191,36,0.5)]';
+            return 'shadow-[0_0_10px_rgba(244,63,94,0.5)]';
         };
 
         return (
-            <motion.div
-                layout
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="space-y-1.5"
-            >
-                <div className="flex justify-between items-baseline">
-                    <span className="text-xs font-medium text-gray-600 dark:text-gray-400">{displayName}</span>
+            <div className="space-y-2 py-2 px-1">
+                <div className="flex justify-between items-center">
                     <div className="flex items-center gap-2">
-                        <span className="text-[10px] text-blue-600 dark:text-blue-400 font-mono">
-                            {model.reset_time ? `R: ${formatTimeRemaining(model.reset_time)}` : t('common.unknown')}
-                        </span>
-                        <span className={clsx("text-xs font-bold", getStatusColor(model.percentage))}>
-                            {model.percentage}%
-                        </span>
+                        <div className={clsx("p-1.5 rounded-md bg-gray-100 dark:bg-white/5", colorClass === 'cyan' ? 'text-cyan-500' : 'text-emerald-500')}>
+                            <Icon className="w-3.5 h-3.5" />
+                        </div>
+                        <span className="text-xs font-semibold text-gray-700 dark:text-gray-200">{displayName}</span>
                     </div>
+                    <span className={clsx("text-xs font-bold font-mono", getStatusColor(model.percentage))}>
+                        {model.percentage}%
+                    </span>
                 </div>
-                <div className="w-full bg-gray-100 dark:bg-white/10 rounded-full h-1.5 overflow-hidden">
-                    <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: `${model.percentage}%` }}
-                        transition={{ duration: 0.8, ease: "easeOut" }}
-                        className={clsx("h-full rounded-full shadow-[0_0_8px_currentColor]", getBarColor(model.percentage))}
+                <div className="w-full bg-gray-100 dark:bg-white/5 rounded-full h-1.5 overflow-hidden">
+                    <div 
+                        className={clsx("h-full rounded-full transition-all duration-1000 ease-out", getBarColor(model.percentage), getGlow(model.percentage))} 
+                        style={{ width: `${model.percentage}%` }} 
                     />
                 </div>
-            </motion.div>
+            </div>
         );
     };
 
+    const handleQuit = async () => {
+        if (!isTauri()) return;
+        const { exit } = await import('@tauri-apps/plugin-process');
+        await exit(0);
+    };
+
     return (
-        <div className="h-screen w-full flex items-center justify-center bg-transparent">
-            {/* Main Container - 300px fixed width */}
-            <motion.div
+        <div className="w-full h-screen bg-transparent select-none pb-2">
+            <div
                 ref={containerRef}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                className="w-[300px] flex flex-col glass-panel animated-bg shadow-2xl overflow-hidden sm:rounded-3xl border border-white/20 dark:border-white/10"
+                className="w-[300px] flex flex-col bg-white/95 dark:bg-[#111111]/95 backdrop-blur-xl shadow-2xl overflow-hidden rounded-xl border border-black/5 dark:border-white/10"
             >
-                {/* Header / Drag Region */}
-                <div
-                    className="flex-none flex items-center justify-between px-5 py-2 bg-white/40 dark:bg-black/20 backdrop-blur-md border-b border-gray-100 dark:border-white/5 select-none relative z-10"
-                    onMouseDown={handleMouseDown}
-                    data-tauri-drag-region
-                >
-                    <div className="flex items-center gap-2 text-sm font-semibold text-gray-900 dark:text-white overflow-hidden">
-                        <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)] animate-pulse shrink-0" />
-                        <span className="truncate" title={currentAccount?.email}>
-                            {currentAccount?.email?.split('@')[0] || 'No Account'}
-                        </span>
-                    </div>
-
-                    <div
-                        className="flex items-center gap-1 no-drag shrink-0"
-                        onMouseDown={(e) => e.stopPropagation()}
-                    >
-                        <button
-                            onClick={handleRefresh}
-                            className={clsx(
-                                "p-2 rounded-lg hover:bg-gray-200/50 dark:hover:bg-white/10 transition-colors"
-                            )}
-                            title={t('common.refresh', 'Refresh')}
-                        >
-                            <RefreshCw size={14} className={clsx(isRefreshing && "animate-spin text-blue-500")} />
-                        </button>
-                        <div className="w-px h-3 bg-gray-300 dark:bg-white/20 mx-1" />
-                        <button
-                            onClick={handleMaximize}
-                            className="p-2 rounded-lg hover:bg-gray-200/50 dark:hover:bg-white/10 transition-colors text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-                            title={t('common.maximize', 'Full View')}
-                        >
-                            <Maximize2 size={14} />
-                        </button>
-                    </div>
-                </div>
-
-                {/* Content Scroll Area */}
-                <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-5 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-200 dark:scrollbar-thumb-white/10">
-                    {!currentAccount ? (
-                        <div className="h-full flex flex-col items-center justify-center text-center opacity-50 space-y-2">
-                            <ShieldAlert size={32} />
-                            <p className="text-sm">No account selected</p>
-                        </div>
-                    ) : (
-                        <div className="space-y-5">
-                            {/* Account Info Card - Now simplified */}
-                            <div className="flex flex-col gap-2">
-                                <div className="flex flex-wrap gap-2">
-                                    {/* Custom Label */}
-                                    {currentAccount.custom_label && (
-                                        <span className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 text-[10px] font-bold shadow-sm shrink-0">
-                                            <Tag className="w-2.5 h-2.5" />
-                                            {currentAccount.custom_label}
-                                        </span>
-                                    )}
-                                </div>
+                {/* Header */}
+                <div className="p-4 pb-3 border-b border-gray-200/50 dark:border-white/5">
+                    <div className="flex items-center gap-3">
+                        <div className="relative">
+                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-inner">
+                                <User className="w-4 h-4" />
                             </div>
-
-                            {/* Divider only if there was content above it */}
-                            {currentAccount.custom_label && <div className="w-full h-px bg-gray-100 dark:bg-white/5" />}
-
-                            {/* Models List */}
-                            <AnimatePresence mode='popLayout'>
-                                <div className="space-y-4 !mt-0">
-                                    {renderModelRow(geminiProModel, 'Gemini 3.1 Pro', 'emerald')}
-                                    {renderModelRow(geminiFlashModel, 'Gemini 3 Flash', 'emerald')}
-                                    {renderModelRow(claudeModel, t('common.claude_series', 'Claude '), 'cyan')}
-
-                                    {!geminiProModel && !geminiFlashModel && !claudeModel && (
-                                        <div className="text-center py-4 text-xs text-gray-400">
-                                            No quota data available
-                                        </div>
-                                    )}
-                                </div>
-                            </AnimatePresence>
+                            <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-green-500 border-2 border-white dark:border-[#111111]"></div>
                         </div>
-                    )}
-                </div>
-
-                {/* Footer Status / Latest Log */}
-                <div className="flex-none h-8 bg-gray-50 dark:bg-black/20 flex items-center justify-between px-3 text-[10px] text-gray-500 dark:text-gray-400 border-t border-gray-100 dark:border-white/5 overflow-hidden">
-                    {latestLog ? (
-                        <motion.div
-                            key={latestLog.id}
-                            initial={{ opacity: 0, y: 5 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="flex items-center w-full gap-2"
-                        >
-                            <span title={latestLog.status.toString()} className={`w-1.5 h-1.5 rounded-full ${latestLog.status >= 200 && latestLog.status < 400 ? 'bg-emerald-500' : 'bg-red-500'}`}></span>
-                            <span className="font-bold truncate max-w-[100px]" title={latestLog.model}>
-                                {latestLog.mapped_model || latestLog.model}
+                        <div className="flex flex-col">
+                            <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wider">Active Account</span>
+                            <span className="text-sm font-bold text-gray-900 dark:text-white truncate max-w-[200px]">
+                                {currentAccount?.email || 'No Account'}
                             </span>
-
-                            <div className="flex-1 flex items-center justify-end gap-2">
-                                <div className="flex items-center gap-1.5 text-[9px]" title="Input/Output Tokens">
-                                    <Activity size={10} className="text-blue-500" />
-                                    <span className="flex items-center gap-0.5 text-gray-500 dark:text-gray-400">
-                                        I:<span className="font-mono text-gray-900 dark:text-gray-200">{formatCompactNumber(latestLog.input_tokens || 0)}</span>
-                                    </span>
-                                    <span className="text-gray-300 dark:text-gray-600">/</span>
-                                    <span className="flex items-center gap-0.5 text-gray-500 dark:text-gray-400">
-                                        O:<span className="font-mono text-gray-900 dark:text-gray-200">{formatCompactNumber(latestLog.output_tokens || 0)}</span>
-                                    </span>
-                                </div>
-
-                                <div className="w-px h-2.5 bg-gray-300 dark:bg-white/10" />
-
-                                <div className="flex items-center gap-0.5" title="Duration">
-                                    <Clock size={10} className="text-gray-400" />
-                                    <span className="font-mono">{(latestLog.duration / 1000).toFixed(2)}s</span>
-                                </div>
-                            </div>
-                        </motion.div>
-                    ) : (
-                        <>
-                            <div className="flex items-center gap-1.5">
-                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                                <span>Connected</span>
-                            </div>
-                            <span className="font-mono opacity-50">v{appVersion}</span>
-                        </>
+                        </div>
+                    </div>
+                </div>
+                
+                {/* Quotas */}
+                <div className="p-4 space-y-1">
+                    {renderModelRow(geminiProModel, 'Gemini 3.1 Pro', 'emerald', Sparkles)}
+                    {renderModelRow(geminiFlashModel, 'Gemini 3 Flash', 'emerald', Zap)}
+                    {renderModelRow(claudeModel, t('common.claude_series', 'Claude Opus/Sonnet'), 'cyan', Cpu)}
+                    
+                    {!geminiProModel && !geminiFlashModel && !claudeModel && (
+                        <div className="flex flex-col items-center justify-center py-6 text-gray-400 gap-2">
+                            <Database className="w-6 h-6 opacity-50" />
+                            <span className="text-xs">No active quota data</span>
+                        </div>
                     )}
                 </div>
-            </motion.div>
+                
+                {/* Footer Actions */}
+                <div className="p-2 bg-gray-50/50 dark:bg-black/20 border-t border-gray-200/50 dark:border-white/5 space-y-1">
+                    <button 
+                        onClick={handleMaximize}
+                        className="group w-full flex items-center justify-between px-3 py-2 text-xs font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-white dark:hover:bg-white/10 rounded-lg transition-all duration-200"
+                    >
+                        <span>{t('nav.full_app_mode', 'Open Full App')}</span>
+                        <Maximize2 className="w-3.5 h-3.5 opacity-50 group-hover:opacity-100 group-hover:scale-110 transition-all" />
+                    </button>
+                    <button 
+                        onClick={handleQuit}
+                        className="group w-full flex items-center justify-between px-3 py-2 text-xs font-medium text-gray-600 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-all duration-200"
+                    >
+                        <span>{t('common.quit', 'Quit')}</span>
+                        <Power className="w-3.5 h-3.5 opacity-50 group-hover:opacity-100 group-hover:scale-110 transition-all" />
+                    </button>
+                </div>
+            </div>
         </div>
     );
 }

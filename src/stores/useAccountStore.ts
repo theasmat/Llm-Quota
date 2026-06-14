@@ -109,7 +109,10 @@ export const useAccountStore = create<AccountState>((set, get) => ({
         set({ loading: true, error: null });
         try {
             await accountService.fetchAccountQuota(accountId);
-            await get().fetchAccounts();
+            await Promise.all([
+                get().fetchAccounts(),
+                get().fetchCurrentAccount()
+            ]);
             set({ loading: false });
         } catch (error) {
             set({ error: String(error), loading: false });
