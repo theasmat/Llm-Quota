@@ -250,7 +250,17 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           artifacts: "all-artifacts/**/*,updater.json"
           artifactErrorsFailBuild: false
+          replacesArtifacts: true
+          makeLatest: legacy
 
+  update-readme:
+    needs: publish-release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
       - name: Update README with download links
         env:
           RELEASE_TAG: ${{ github.ref_name }}
@@ -264,8 +274,6 @@ jobs:
           git add README.md
           git commit -m "docs: auto-update direct download links for release ${RELEASE_TAG}" || echo "No changes to commit"
           git push origin master || echo "Failed to push README update"
-          replacesArtifacts: true
-          makeLatest: legacy
 
   docker-build-amd64:
     runs-on: ubuntu-latest
