@@ -1,7 +1,13 @@
 use serde::{Deserialize, Serialize};
 
-pub const CLIENT_ID: &str = "YOUR_GOOGLE_OAUTH_CLIENT_ID";
-pub const CLIENT_SECRET: &str = "YOUR_GOOGLE_OAUTH_CLIENT_SECRET";
+pub const CLIENT_ID: &str = match option_env!("GOOGLE_CLIENT_ID") {
+    Some(val) => val,
+    None => "YOUR_GOOGLE_OAUTH_CLIENT_ID",
+};
+pub const CLIENT_SECRET: &str = match option_env!("GOOGLE_CLIENT_SECRET") {
+    Some(val) => val,
+    None => "YOUR_GOOGLE_OAUTH_CLIENT_SECRET",
+};
 #[derive(Debug, Clone)]
 pub struct OAuthClientConfig {
     pub key: String,
@@ -45,6 +51,23 @@ fn build_registry() -> OAuthClientRegistry {
         client_secret: CLIENT_SECRET.to_string(),
         is_builtin: true,
     }];
+
+    if let Ok(config) = crate::modules::config::load_app_config() {
+        if let (Some(id), Some(secret)) = (config.oauth_client_id, config.oauth_client_secret) {
+            let id = id.trim();
+            let secret = secret.trim();
+            if !id.is_empty() && !secret.is_empty() {
+                let custom_client = OAuthClientConfig {
+                    key: "custom_client".to_string(),
+                    label: "Custom User App".to_string(),
+                    client_id: id.to_string(),
+                    client_secret: secret.to_string(),
+                    is_builtin: false,
+                };
+                clients.push(custom_client);
+            }
+        }
+    }
 
     if let Ok(raw_extra_clients) = std::env::var(OAUTH_CLIENTS_ENV) {
         for entry in raw_extra_clients.split(';') {
@@ -106,7 +129,13 @@ fn build_registry() -> OAuthClientRegistry {
         .ok()
         .map(|v| normalize_client_key(&v))
         .filter(|v| !v.is_empty())
-        .unwrap_or_else(|| normalize_client_key(DEFAULT_OAUTH_CLIENT_KEY));
+        .unwrap_or_else(|| {
+            if clients.iter().any(|c| c.key == "custom_client") {
+                "custom_client".to_string()
+            } else {
+                normalize_client_key(DEFAULT_OAUTH_CLIENT_KEY)
+            }
+        });
 
     if !clients.iter().any(|c| c.key == active_key) {
         active_key = clients
@@ -123,6 +152,12 @@ fn build_registry() -> OAuthClientRegistry {
 
 fn oauth_registry() -> &'static std::sync::RwLock<OAuthClientRegistry> {
     OAUTH_CLIENT_REGISTRY.get_or_init(|| std::sync::RwLock::new(build_registry()))
+}
+
+pub fn reload_oauth_registry() {
+    if let Ok(mut registry) = oauth_registry().write() {
+        *registry = build_registry();
+    }
 }
 
 fn get_client_by_key<'a>(

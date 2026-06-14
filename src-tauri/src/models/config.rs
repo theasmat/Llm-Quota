@@ -15,6 +15,10 @@ pub struct AppConfig {
     pub language: String,
     #[serde(default = "default_true")]
     pub auto_check_updates: bool,
+    #[serde(default)]
+    pub oauth_client_id: Option<String>,
+    #[serde(default)]
+    pub oauth_client_secret: Option<String>,
 }
 
 fn default_true() -> bool {
@@ -27,6 +31,8 @@ impl Default for AppConfig {
             theme: Theme::System,
             language: "en-US".to_string(),
             auto_check_updates: true,
+            oauth_client_id: None,
+            oauth_client_secret: None,
         }
     }
 }

@@ -34,6 +34,11 @@ export default function AccountDetailsDialog({ account, onClose }: AccountDetail
                                 {account.quota.subscription_tier}
                             </div>
                         )}
+                        {account.token?.oauth_client_key && (
+                            <div className="px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 text-[10px] font-bold tracking-wider flex items-center gap-1" title={t('accounts.details.client')}>
+                                {account.token.oauth_client_key}
+                            </div>
+                        )}
                     </div>
                     <button
                         onClick={onClose}

@@ -2,7 +2,8 @@
  * 
  * ，
  */
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
+import { invoke } from '@tauri-apps/api/core';
 import {
     DndContext,
     closestCenter,
@@ -285,6 +286,18 @@ function AccountRowContent({
     const [isEditingLabel, setIsEditingLabel] = useState(false);
     const [labelInput, setLabelInput] = useState(account.custom_label || '');
 
+    const [localIntegrations, setLocalIntegrations] = useState<string[]>([]);
+
+    useEffect(() => {
+        let mounted = true;
+        invoke<string[]>('check_local_integrations', { email: account.email })
+            .then(res => {
+                if (mounted) setLocalIntegrations(res);
+            })
+            .catch(err => console.error('Failed to check local integrations:', err));
+        return () => { mounted = false; };
+    }, [account.email]);
+
     const handleSaveLabel = () => {
         if (onUpdateLabel) {
             onUpdateLabel(labelInput.trim());
@@ -437,6 +450,14 @@ function AccountRowContent({
                                 {account.custom_label}
                             </span>
                         )}
+                        {/*  */}
+                        {/*  */}
+                        {localIntegrations.map(integration => (
+                            <span key={integration} className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 text-[10px] font-bold shadow-sm border border-indigo-200/50 dark:border-indigo-800/50" title={t('accounts.local_integration', 'Local Integration')}>
+                                <Bot className="w-2.5 h-2.5" />
+                                {integration.toUpperCase()}
+                            </span>
+                        ))}
                         {/*  */}
                         {isEditingLabel && (
                             <div className="flex items-center gap-1">

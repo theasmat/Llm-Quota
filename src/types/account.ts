@@ -29,6 +29,7 @@ export interface TokenData {
     expiry_timestamp: number;
     token_type: string;
     email?: string;
+    oauth_client_key?: string;
 }
 
 export interface QuotaData {

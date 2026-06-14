@@ -241,8 +241,10 @@
         "warmup_batch_triggered": "Warmup tasks triggered for {{count}} accounts",
         "quota_protected": "Protected",
         "details": {
-            "title": "Quota Details",
-            "model_quota": "Model Quota",
+            "title": "Account Details",
+            "models": "Model Quotas",
+            "client": "Login Client",
+            "local_integration": "Local Integrations",
             "protected_models": "Protected Models"
         },
         "toast": {
@@ -375,6 +377,14 @@
             "auto_sync": "Auto Sync Current Account",
             "auto_sync_desc": "Automatically sync current active account information periodically",
             "sync_interval": "Sync Interval (minutes)"
+        },
+        "oauth": {
+            "title": "Custom Google OAuth",
+            "desc": "Configure your own Google Cloud OAuth app for login to prevent 'invalid_client' errors.",
+            "client_id": "Client ID",
+            "client_id_placeholder": "e.g., 123...apps.googleusercontent.com",
+            "client_secret": "Client Secret",
+            "client_secret_placeholder": "e.g., GOCSPX-..."
         },
         "warmup": {
             "title": "Smart Warmup",

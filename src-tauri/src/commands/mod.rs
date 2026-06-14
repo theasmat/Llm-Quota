@@ -2,11 +2,13 @@ pub mod account;
 pub mod config;
 pub mod oauth;
 pub mod system;
+pub mod integration;
 
 use account::*;
 use config::*;
 use oauth::*;
 use system::*;
+use integration::*;
 
 /// Generates a handler for all commands in this module
 pub fn get_handlers() -> impl Fn(tauri::ipc::Invoke) -> bool {
@@ -40,5 +42,6 @@ pub fn get_handlers() -> impl Fn(tauri::ipc::Invoke) -> bool {
         import_from_db,
         import_v1_accounts,
         import_custom_db,
+        check_local_integrations,
     ]
 }

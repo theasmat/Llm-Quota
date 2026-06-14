@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
+import { invoke } from '@tauri-apps/api/core';
 import { 
     Info, 
     Trash2, 
@@ -58,6 +59,18 @@ function AccountCard({ account, selected, onSelect, isCurrent: propIsCurrent, is
 
     // Use the prop directly from parent component
     const isCurrent = propIsCurrent;
+
+    const [localIntegrations, setLocalIntegrations] = useState<string[]>([]);
+
+    useEffect(() => {
+        let mounted = true;
+        invoke<string[]>('check_local_integrations', { email: account.email })
+            .then(res => {
+                if (mounted) setLocalIntegrations(res);
+            })
+            .catch(err => console.error('Failed to check local integrations:', err));
+        return () => { mounted = false; };
+    }, [account.email]);
 
     const handleSaveLabel = () => {
         if (onUpdateLabel) {
@@ -211,6 +224,12 @@ function AccountCard({ account, selected, onSelect, isCurrent: propIsCurrent, is
                                     {account.custom_label}
                                 </span>
                             )}
+                            {localIntegrations.map(integration => (
+                                <span key={integration} className="flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 text-[9px] font-bold shadow-sm border border-indigo-200/50 dark:border-indigo-800/50" title={t('accounts.local_integration', 'Local Integration')}>
+                                    <Bot className="w-2.5 h-2.5" />
+                                    {integration.toUpperCase()}
+                                </span>
+                            ))}
                         </div>
                         <span className="text-[10px] text-gray-400 dark:text-gray-500 font-mono shrink-0 whitespace-nowrap">
                             {new Date(account.last_used * 1000).toLocaleString([], { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}

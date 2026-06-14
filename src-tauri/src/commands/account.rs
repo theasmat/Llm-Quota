@@ -182,11 +182,20 @@ pub async fn fetch_account_quota(
     Ok(quota_data)
 }
 
+use serde::{Serialize, Deserialize};
+
+#[derive(Serialize, Deserialize)]
+pub struct RefreshStats {
+    pub success: u32,
+    pub failed: u32,
+    pub details: Vec<String>,
+}
+
 #[tauri::command]
 pub async fn refresh_all_quotas(
     _app: tauri::AppHandle,
-) -> Result<Vec<(String, Result<QuotaData, String>)>, String> {
-    let mut results = Vec::new();
+) -> Result<RefreshStats, String> {
+    let mut stats = RefreshStats { success: 0, failed: 0, details: Vec::new() };
     let accounts = modules::account::list_accounts()?;
     for mut acc in accounts {
         // Smart token refresh: only if expired or expiring soon
@@ -230,7 +239,7 @@ pub async fn refresh_all_quotas(
                                 acc.token.project_id = Some(p);
                             }
                             let _ = modules::account::save_account(&acc);
-                            results.push((acc.id, Ok(retry_q)));
+                            stats.success += 1;
                             continue;
                         }
                     }
@@ -240,12 +249,15 @@ pub async fn refresh_all_quotas(
                     acc.token.project_id = Some(p);
                 }
                 let _ = modules::account::save_account(&acc);
-                results.push((acc.id, Ok(q)));
+                stats.success += 1;
             }
-            Err(e) => results.push((acc.id, Err(e.to_string()))),
+            Err(e) => {
+                stats.failed += 1;
+                stats.details.push(format!("{}: {}", acc.email, e));
+            }
         }
     }
-    Ok(results)
+    Ok(stats)
 }
 
 #[tauri::command]
