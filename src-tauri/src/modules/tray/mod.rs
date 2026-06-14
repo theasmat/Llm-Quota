@@ -5,7 +5,7 @@ pub mod linux;
 use tauri::{
     menu::{Menu, MenuItem},
     tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
-    AppHandle, Manager, LogicalPosition, LogicalSize,
+    AppHandle, Manager, LogicalPosition,
 };
 
 pub fn set_tray_mode(app: &AppHandle, enabled: bool) {
@@ -55,13 +55,22 @@ pub fn setup_tray(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
                     let scale_factor = window.scale_factor().unwrap_or(1.0);
                     let win_logical_size = win_size.to_logical::<f64>(scale_factor);
                     
-                    let mut x = rect.position.x as f64 - (win_logical_size.width / 2.0) + (rect.size.width as f64 / 2.0);
+                    let (rect_x, rect_y) = match rect.position {
+                        tauri::Position::Physical(p) => (p.x as f64 / scale_factor, p.y as f64 / scale_factor),
+                        tauri::Position::Logical(p) => (p.x, p.y),
+                    };
+                    let (rect_w, rect_h) = match rect.size {
+                        tauri::Size::Physical(s) => (s.width as f64 / scale_factor, s.height as f64 / scale_factor),
+                        tauri::Size::Logical(s) => (s.width, s.height),
+                    };
+                    
+                    let mut x = rect_x - (win_logical_size.width / 2.0) + (rect_w / 2.0);
                     
                     #[cfg(target_os = "macos")]
-                    let y = rect.position.y as f64 + rect.size.height as f64;
+                    let y = rect_y + rect_h;
                     
                     #[cfg(not(target_os = "macos"))]
-                    let y = rect.position.y as f64 - win_logical_size.height;
+                    let y = rect_y - win_logical_size.height;
                     
                     // Simple bounds check (avoid negative x)
                     if x < 0.0 { x = 0.0; }

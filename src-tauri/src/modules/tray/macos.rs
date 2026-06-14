@@ -1,5 +1,5 @@
 #[cfg(target_os = "macos")]
-use tauri::{AppHandle, Manager};
+use tauri::AppHandle;
 
 #[cfg(target_os = "macos")]
 pub fn set_tray_mode(app: &AppHandle, enabled: bool) {
