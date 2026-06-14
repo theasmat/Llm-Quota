@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { formatTimeRemaining, formatCompactNumber } from '../../utils/format';
-import { enterMiniMode, exitMiniMode } from '../../utils/windowManager';
+import { enterTrayUIState, exitTrayUIState } from '../../utils/windowManager';
 import { getVersion } from '@tauri-apps/api/app';
 import { listen } from '@tauri-apps/api/event';
 
@@ -83,7 +83,7 @@ export default function WinSystemTrayCard() {
                 const height = containerRef.current.scrollHeight;
                 // Calculate content height for the utility (which adds 20px padding)
                 // We want final height to be approx (scroll height - header adjustment)
-                await enterMiniMode(height);
+                await enterTrayUIState(height);
             }
         };
 
@@ -105,7 +105,7 @@ export default function WinSystemTrayCard() {
     };
 
     const handleMaximize = async () => {
-        await exitMiniMode();
+        await exitTrayUIState();
         // Turn off tray mode to open full app
         const { useConfigStore } = await import('../../stores/useConfigStore');
         const configStore = useConfigStore.getState();

@@ -2,11 +2,10 @@ import { getCurrentWindow, LogicalSize } from '@tauri-apps/api/window';
 import { isTauri } from './env';
 
 /**
- * Enter mini view mode
+ * Enter Tray UI state
  * @param contentHeight The height of the content to fit
- * @param shouldCenter Whether to center the window (default: false)
  */
-export const enterMiniMode = async (contentHeight: number, shouldCenter: boolean = false) => {
+export const enterTrayUIState = async (contentHeight: number) => {
     if (!isTauri()) return;
     try {
         const win = getCurrentWindow();
@@ -20,22 +19,17 @@ export const enterMiniMode = async (contentHeight: number, shouldCenter: boolean
         await win.setAlwaysOnTop(true);
         // Enable window shadow
         await win.setShadow(true);
-        // Disable resizing in mini mode
+        // Disable resizing in tray mode
         await win.setResizable(false);
-
-        // Center window only if requested (usually on first load)
-        if (shouldCenter) {
-            await win.center();
-        }
     } catch (error) {
-        console.error('Failed to enter mini mode:', error);
+        console.error('Failed to enter tray UI state:', error);
     }
 };
 
 /**
- * Exit mini view mode and restore default window state
+ * Exit Tray UI state and restore default window state
  */
-export const exitMiniMode = async () => {
+export const exitTrayUIState = async () => {
     if (!isTauri()) return;
     try {
         const win = getCurrentWindow();
@@ -48,7 +42,7 @@ export const exitMiniMode = async () => {
         // Re-enable resizing
         await win.setResizable(true);
     } catch (error) {
-        console.error('Failed to exit mini mode:', error);
+        console.error('Failed to exit tray UI state:', error);
     }
 };
 
